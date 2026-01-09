@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="de">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Caventura - Camper Mieten</title>
+    <link href="css/caventura.css?v=6" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="brand">
+                <i class="fas fa-shuttle-van"></i> Caventura
+            </a>
+            <ul class="nav-menu">
+                <li><a href="wohnwagen_list.html" class="nav-link">Unsere Camper</a></li>
+                <li><a href="spots.html" class="nav-link">Spots</a></li>
+                <li id="nav-auth"></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Vibrant Hero -->
+    <div class="hero-wrapper">
+        <div class="container hero-content text-center">
+            <h1>FREIHEIT MIETEN.<br>ABENTEUER ERLEBEN.</h1>
+            <p>Dein perfekter Camper für den nächsten Roadtrip wartet schon.</p>
+        </div>
+
+        <!-- SVG Wave -->
+        <div class="hero-wave">
+            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"
+                preserveAspectRatio="none">
+                <path
+                    d="M985.66,92.83C906.67,72,823.78,31,432.84,2C302.54-6.33,149.52,4.89,0,44.75V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
+                    class="shape-fill" fill="#FFFFFF" fill-opacity="1"></path>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Booking Bar -->
+    <div class="container" style="position: relative; z-index: 20;">
+        <form action="wohnwagen_list.html" class="booking-bar" style="grid-template-columns: 1fr 1fr 0.8fr 1.5fr auto;">
+            <div>
+                <label class="form-label">Abholung</label>
+                <input type="date" name="start" class="form-input" required>
+            </div>
+            <div>
+                <label class="form-label">Rückgabe</label>
+                <input type="date" name="end" class="form-input" required>
+            </div>
+            <div>
+                <label class="form-label">Personen</label>
+                <input type="number" name="sleeps" class="form-input" min="1" max="8" value="2" required
+                    placeholder="Anzahl">
+            </div>
+            <div>
+                <label class="form-label">Standort</label>
+                <select name="city" id="location-select" class="form-input">
+                    <option value="">Lade Standorte...</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary" style="height: 52px; align-self: end; width: 100%;">
+                JETZT FINDEN
+            </button>
+        </form>
+    </div>
+
+    <!-- Value Props -->
+    <section class="section">
+        <div class="container">
+            <div class="text-center mb-l">
+                <h2>WARUM CAVENTURA?</h2>
+                <p style="color:var(--text-light);">Dein verlässlicher Partner für Camping-Abenteuer.</p>
+            </div>
+
+            <div class="card-grid" style="grid-template-columns: repeat(3, 1fr); gap: 40px; box-shadow: none;">
+                <div class="text-center">
+                    <div class="feat-icon"><i class="fas fa-check-circle"></i></div>
+                    <h3>Geprüfte Qualität</h3>
+                    <p>Jedes Fahrzeug wird persönlich überprüft, um höchste Standards zu garantieren.</p>
+                </div>
+                <div class="text-center">
+                    <div class="feat-icon"><i class="fas fa-tags"></i></div>
+                    <h3>Transparente Preise</h3>
+                    <p>Keine versteckten Kosten. Du siehst sofort den Endpreis inklusive aller Gebühren.</p>
+                </div>
+                <div class="text-center">
+                    <div class="feat-icon"><i class="fas fa-handshake"></i></div>
+                    <h3>Direkt & Persönlich</h3>
+                    <p>Miete direkt von geprüften Anbietern mit persönlicher Übergabe und Einweisung.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Campers -->
+    <section class="section bg-light">
+        <div class="container">
+            <h2 class="text-center mb-l">UNSERE BELIEBTESTEN MODELLE</h2>
+            <div class="card-grid" id="featured-campers">
+                <!-- JS content -->
+                <div class="text-center" style="width:100%; grid-column:1/-1;">Lade Camper...</div>
+            </div>
+            <div class="text-center" style="margin-top: 50px;">
+                <a href="wohnwagen_list.html" class="btn btn-teal">ALLE ANZEIGEN</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="section" style="background: var(--text-main); color: white; padding-bottom: 20px;">
+        <div class="container">
+            <div class="card-grid" style="grid-template-columns: 1fr 1fr 1fr; margin-top:0;">
+                <div>
+                    <h3 style="color:white;">Caventura</h3>
+                    <p style="color: #A0AEC0;">Dein Partner für Vanlife und Abenteuer in ganz Europa.</p>
+                </div>
+                <div>
+                    <h4 style="color:white; margin-bottom: 20px;">Quick Links</h4>
+                    <ul style="list-style: none; line-height: 2;">
+                        <li><a href="#" style="color: #A0AEC0;">Camper mieten</a></li>
+                        <li><a href="#" style="color: #A0AEC0;">So funktioniert's</a></li>
+                        <li><a href="#" style="color: #A0AEC0;">Reiseziele</a></li>
+                        <li><a href="impressum.html" style="color: #A0AEC0;">Impressum</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="color:white; margin-bottom: 20px;">Kontakt</h4>
+                    <p style="color: #A0AEC0;">hallo@caventura.com<br>+49 89 12345678</p>
+                </div>
+            </div>
+            <div
+                style="border-top: 1px solid #4A5568; margin-top: 40px; padding-top: 20px; text-align: center; color: #718096; font-size: 0.9rem;">
+                &copy; 2025 Caventura GmbH. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/app.js?v=caventura_v5"></script>
+    <script>
+        (async () => {
+            const user = await checkAuth();
+
+            try {
+                // Load data
+                const data = await apiRequest('wohnwagen.php');
+
+                // Populate Locations
+                const cities = [...new Set(data.map(c => c.pickup_city).filter(Boolean))].sort();
+                const locSelect = document.getElementById('location-select');
+                if (cities.length > 0) {
+                    locSelect.innerHTML = '<option value="">Alle Standorte</option>' +
+                        cities.map(city => `<option value="${city}">${city}</option>`).join('');
+                } else {
+                    locSelect.innerHTML = '<option value="">Keine Standorte</option>';
+                }
+
+                // Featured Campers
+                const list = document.getElementById('featured-campers');
+                if (data.length > 0) {
+                    list.innerHTML = data.slice(0, 3).map(c => `
+                        <div class="card" onclick="location.href='wohnwagen_detail.html?id=${c.id}'" style="cursor:pointer;">
+                            <div class="card-img-wrap">
+                                <span class="card-badge">${c.brand}</span>
+                                <div class="card-price">${parseFloat(c.price_per_day).toFixed(0)}€</div>
+                                <img src="${c.images?.[0] ? 'uploads/' + c.images[0] : 'https://placehold.co/400x300'}" class="card-img">
+                            </div>
+                            <div class="card-body">
+                                <h3>${c.title}</h3> 
+                                <div style="display:flex; gap: 15px; margin-top: 10px; color: var(--text-light); font-size: 0.9rem; font-weight: 600;">
+                                    <span><i class="fas fa-user-friends"></i> ${c.sleeps || 2}</span>
+                                    <span><i class="fas fa-tachometer-alt"></i> ${c.transmission || 'Manuell'}</span>
+                                    <span><i class="fas fa-map-marker-alt"></i> ${c.pickup_city}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    list.innerHTML = '<div class="text-center">Keine Camper gefunden.</div>';
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        })();
+
+        // Date constraints
+        const today = new Date().toISOString().split('T')[0];
+        document.querySelectorAll('input[type="date"]').forEach(e => e.min = today);
+    </script>
+    <script src="js/cookie-consent.js"></script>
+</body>
+
+</html>
