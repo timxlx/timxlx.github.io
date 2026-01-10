@@ -12,40 +12,87 @@
     <title>Datenschutzerklärung - AnchorTag</title>
     <style>
         :root {
-            --bg-main: #111111;
-            --text-primary: #ffffff;
-            --text-secondary: #888888;
-            --card-bg: #1c1c1e;
+            --bg-main: #0a0a0a;
+            --text-primary: #f5f5f7;
+            --text-secondary: #86868b;
+            --accent: #2997ff;
+            --nav-bg: rgba(10, 10, 10, 0.8);
             --border: #333333;
-            --accent: #ffffff;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Helvetica Neue", sans-serif;
             background-color: var(--bg-main);
             color: var(--text-primary);
-            line-height: 1.6;
-            padding: 80px 20px 40px;
-            max-width: 700px;
-            margin: 0 auto;
             -webkit-font-smoothing: antialiased;
         }
 
-        h1 {
-            font-size: 2rem;
+        /* NAVIGATION */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 1000;
+        }
+
+        .nav-brand {
             font-weight: 700;
-            margin-bottom: 40px;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            text-decoration: none;
             letter-spacing: -0.02em;
         }
 
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        /* CONTENT */
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 120px 20px 80px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 60px;
+        }
+
         h2 {
-            font-size: 1.1rem;
-            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-primary);
             margin-top: 60px;
             margin-bottom: 20px;
-            color: var(--text-primary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
             border-bottom: 1px solid var(--border);
             padding-bottom: 10px;
         }
@@ -53,160 +100,157 @@
         h3 {
             font-size: 1.1rem;
             margin-top: 30px;
+            margin-bottom: 15px;
             color: var(--text-primary);
         }
 
-        a {
-            color: var(--text-primary);
-            text-decoration: underline;
-            text-decoration-color: var(--text-secondary);
-            text-underline-offset: 4px;
-            transition: all 0.2s;
-        }
-
-        a:hover {
+        p,
+        li {
             color: var(--text-secondary);
-            text-decoration-color: var(--text-primary);
+            line-height: 1.6;
+            margin-bottom: 1em;
         }
 
-        .back-link {
-            display: inline-block;
-            margin-bottom: 40px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.9rem;
-        }
-
-        .back-link:hover {
-            color: var(--text-primary);
-        }
-
-        .legal-block p {
-            color: var(--text-secondary);
-            margin-bottom: 1.5em;
-        }
-
-        .legal-block strong {
+        strong {
             color: var(--text-primary);
         }
 
         ul {
             padding-left: 20px;
-            color: var(--text-secondary);
-            margin-bottom: 1.5em;
         }
 
-        li {
-            margin-bottom: 5px;
+        a.text-link {
+            color: var(--text-primary);
+            text-decoration: underline;
+            text-decoration-color: var(--text-secondary);
         }
 
+        /* FOOTER */
         footer {
             margin-top: 80px;
-            color: var(--text-secondary);
-            font-size: 0.85rem;
             border-top: 1px solid var(--border);
-            padding-top: 30px;
+            padding: 40px 0;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 600px) {
+            nav {
+                padding: 0 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <a href="/home/" class="back-link">← Zurück</a>
+    <nav>
+        <a href="/home/" class="nav-brand">Tim Hartung</a>
+        <div class="nav-links">
+            <a href="/home/">Work</a>
+            <a href="/impressum/">Kontakt</a>
+        </div>
+    </nav>
 
-    <h1>Datenschutzerklärung</h1>
+    <div class="container">
+        <h1>Datenschutzerklärung</h1>
 
-    <div class="legal-block">
-        <p>Diese Datenschutzerklärung klärt Sie über die Verarbeitung personenbezogener Daten auf unserer Website und in
-            unserer mobilen App "AnchorTag" auf.</p>
+        <div class="legal-block">
+            <p>Diese Datenschutzerklärung klärt Sie über die Verarbeitung personenbezogener Daten auf unserer Website
+                und in unserer mobilen App "AnchorTag" auf.</p>
 
-        <h3>1. Verantwortlicher</h3>
-        <p>Verantwortlich für die Datenverarbeitung gemäß Art. 4 Abs. 7 DSGVO ist:</p>
-        <p>
-            <strong>Tim Hartung</strong><br>
-            E-Mail: dev@timhartung.de<br>
-            Weitere Kontaktdaten finden Sie im <a href="/impressum/">Impressum</a>.
-        </p>
+            <h3>1. Verantwortlicher</h3>
+            <p>Verantwortlich für die Datenverarbeitung gemäß Art. 4 Abs. 7 DSGVO ist:</p>
+            <p>
+                <strong>Tim Hartung</strong><br>
+                E-Mail: dev@timhartung.de<br>
+                Weitere Kontaktdaten finden Sie im <a href="/impressum/" class="text-link">Impressum</a>.
+            </p>
 
-        <!-- TEIL A: WEBSEITE -->
-        <h2>Teil A: Datenschutz auf der Website</h2>
+            <!-- TEIL A -->
+            <h2>Teil A: Datenschutz auf der Website</h2>
 
-        <h3>Hosting (GitHub Pages)</h3>
-        <p>Diese Website wird bei <strong>GitHub Inc.</strong> (88 Colin P. Kelly Jr. St, San Francisco, CA 94107, USA)
-            gehostet.</p>
-        <p>Beim Aufruf der Webseite erfasst der Webserver automatisch Informationen, die Ihr Browser übermittelt
-            (Server-Logfiles). Dazu gehören:</p>
-        <ul>
-            <li>IP-Adresse (wird von GitHub für Sicherheitszwecke gespeichert)</li>
-            <li>Datum und Uhrzeit der Anfrage</li>
-            <li>Browser-Typ und Version</li>
-        </ul>
-        <p><strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. f DSGVO (Berechtigtes Interesse an der sicheren und
-            fehlerfreien Auslieferung der Website).<br>
-            <strong>Drittlandtransfer:</strong> Die Datenverarbeitung kann in den USA erfolgen. GitHub ist unter dem
-            EU-US Data Privacy Framework zertifiziert, was ein angemessenes Datenschutzniveau garantiert.
-        </p>
-
-
-        <!-- TEIL B: APP -->
-        <h2>Teil B: Datenschutz in der App "AnchorTag"</h2>
-
-        <p><strong>Kurzfassung:</strong> AnchorTag speichert Daten primär lokal ("Privacy First"). Wir haben kein
-            Interesse an deinen persönlichen Daten.</p>
-
-        <h3>1. Lokale Datenverarbeitung</h3>
-        <p>
-            Die App speichert Einstellungen (z. B. deine Fokus-Zeiten, Tags) und Logs ausschließlich lokal auf deinem
-            Gerät. Eine Übertragung an unsere Server findet nicht statt.<br>
-            <strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung / Nutzung der
-            App-Funktionen).
-        </p>
-
-        <h3>2. System-Schnittstellen (Apple Screen Time & NFC)</h3>
-        <p>
-            <strong>Screen Time API:</strong> Der Zugriff zur App-Blockierung erfolgt über die offizielle Schnittstelle
-            von Apple. Wir haben zu keinem Zeitpunkt Einblick, welche Inhalte du in anderen Apps nutzt. Der Zugriff
-            dient rein funktionalen Zwecken.<br><br>
-            <strong>NFC:</strong> Die ID gescannter NFC-Tags wird nur lokal verarbeitet, um die von dir definierten
-            Aktionen auszulösen.
-        </p>
-
-        <h3>3. Anonyme Statistiken (TelemetryDeck)</h3>
-        <p>Wir nutzen <strong>TelemetryDeck</strong> (TelemetryDeck GmbH, Augsburg, Deutschland), um Fehler zu finden
-            und die App zu verbessern. TelemetryDeck sammelt <strong>keine</strong> persönlichen Daten:</p>
-        <ul>
-            <li>Keine IP-Adressen</li>
-            <li>Keine Geräte-IDs</li>
-            <li>Keine Werbe-IDs</li>
-        </ul>
-        <p>Es werden lediglich anonymisierte Signale gesendet (z. B. "App geöffnet", "NFC-Tag gescannt"). Da die Daten
-            anonymisiert sind und nicht auf dich zurückzuführen sind, fallen sie streng genommen nicht unter die DSGVO,
-            wir erwähnen es aber aus Transparenzgründen.<br>
-            <strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. f DSGVO (Berechtigtes Interesse an der
-            App-Optimierung).
-        </p>
+            <h3>Hosting (GitHub Pages)</h3>
+            <p>Diese Website wird bei <strong>GitHub Inc.</strong> (88 Colin P. Kelly Jr. St, San Francisco, CA 94107,
+                USA) gehostet.</p>
+            <p>Beim Aufruf der Webseite erfasst der Webserver automatisch Informationen, die Ihr Browser übermittelt
+                (Server-Logfiles). Dazu gehören:</p>
+            <ul>
+                <li>IP-Adresse (wird von GitHub für Sicherheitszwecke gespeichert)</li>
+                <li>Datum und Uhrzeit der Anfrage</li>
+                <li>Browser-Typ und Version</li>
+            </ul>
+            <p><strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. f DSGVO (Berechtigtes Interesse an der sicheren und
+                fehlerfreien Auslieferung der Website).<br>
+                <strong>Drittlandtransfer:</strong> Die Datenverarbeitung kann in den USA erfolgen. GitHub ist unter dem
+                EU-US Data Privacy Framework zertifiziert, was ein angemessenes Datenschutzniveau garantiert.
+            </p>
 
 
-        <!-- TEIL C: RECHTE -->
-        <h2>Teil C: Deine Rechte</h2>
-        <p>Du hast gemäß DSGVO folgende Rechte bezüglich deiner gespeicherten Daten:</p>
-        <ul>
-            <li>Recht auf Auskunft, Berichtigung oder Löschung.</li>
-            <li>Recht auf Einschränkung der Verarbeitung.</li>
-            <li>Recht auf Widerspruch gegen die Verarbeitung.</li>
-            <li>Recht auf Datenübertragbarkeit.</li>
-        </ul>
-        <p>Da wir in der App keine Nutzerkonten führen und Daten lokal speichern, kannst du die meisten Daten ("Recht
-            auf Löschung") einfach durch Deinstallieren der App entfernen.</p>
+            <!-- TEIL B -->
+            <h2>Teil B: Datenschutz in der App "AnchorTag"</h2>
 
-        <p>Für Anfragen wende dich bitte an: dev@timhartung.de</p>
+            <p><strong>Kurzfassung:</strong> AnchorTag speichert Daten primär lokal ("Privacy First"). Wir haben kein
+                Interesse an deinen persönlichen Daten.</p>
 
-        <p>Zudem hast du das Recht, dich bei einer Datenschutz-Aufsichtsbehörde zu beschweren.</p>
+            <h3>1. Lokale Datenverarbeitung</h3>
+            <p>
+                Die App speichert Einstellungen (z. B. deine Fokus-Zeiten, Tags) und Logs ausschließlich lokal auf
+                deinem Gerät. Eine Übertragung an unsere Server findet nicht statt.<br>
+                <strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung / Nutzung der
+                App-Funktionen).
+            </p>
+
+            <h3>2. System-Schnittstellen (Apple Screen Time & NFC)</h3>
+            <p>
+                <strong>Screen Time API:</strong> Der Zugriff zur App-Blockierung erfolgt über die offizielle
+                Schnittstelle von Apple. Wir haben zu keinem Zeitpunkt Einblick, welche Inhalte du in anderen Apps
+                nutzt. Der Zugriff dient rein funktionalen Zwecken.<br><br>
+                <strong>NFC:</strong> Die ID gescannter NFC-Tags wird nur lokal verarbeitet, um die von dir definierten
+                Aktionen auszulösen.
+            </p>
+
+            <h3>3. Anonyme Statistiken (TelemetryDeck)</h3>
+            <p>Wir nutzen <strong>TelemetryDeck</strong> (TelemetryDeck GmbH, Augsburg, Deutschland), um Fehler zu
+                finden und die App zu verbessern. TelemetryDeck sammelt <strong>keine</strong> persönlichen Daten:</p>
+            <ul>
+                <li>Keine IP-Adressen</li>
+                <li>Keine Geräte-IDs</li>
+                <li>Keine Werbe-IDs</li>
+            </ul>
+            <p>Es werden lediglich anonymisierte Signale gesendet (z. B. "App geöffnet", "NFC-Tag gescannt"). Da die
+                Daten anonymisiert sind und nicht auf dich zurückzuführen sind, fallen sie streng genommen nicht unter
+                die DSGVO, wir erwähnen es aber aus Transparenzgründen.<br>
+                <strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. f DSGVO (Berechtigtes Interesse an der
+                App-Optimierung).
+            </p>
+
+
+            <!-- TEIL C -->
+            <h2>Teil C: Deine Rechte</h2>
+            <p>Du hast gemäß DSGVO folgende Rechte bezüglich deiner gespeicherten Daten:</p>
+            <ul>
+                <li>Recht auf Auskunft, Berichtigung oder Löschung.</li>
+                <li>Recht auf Einschränkung der Verarbeitung.</li>
+                <li>Recht auf Widerspruch gegen die Verarbeitung.</li>
+                <li>Recht auf Datenübertragbarkeit.</li>
+            </ul>
+            <p>Da wir in der App keine Nutzerkonten führen und Daten lokal speichern, kannst du die meisten Daten
+                ("Recht auf Löschung") einfach durch Deinstallieren der App entfernen.</p>
+
+            <p>Für Anfragen wende dich bitte an: dev@timhartung.de</p>
+
+            <p>Zudem hast du das Recht, dich bei einer Datenschutz-Aufsichtsbehörde zu beschweren.</p>
+        </div>
+
+        <footer>
+            &copy; 2026 Tim Hartung
+        </footer>
     </div>
-
-    <footer>
-        <p>&copy; 2026 Tim Hartung</p>
-    </footer>
 
 </body>
 
