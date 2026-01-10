@@ -122,9 +122,8 @@
     </div>
 
     <script>
-        // Check if already authenticated
         if (localStorage.getItem('authenticated') === 'true') {
-            window.location.href = 'home.html';
+            window.location.href = '/home/';
         }
 
         document.getElementById('loginForm').addEventListener('submit', function (e) {
@@ -137,7 +136,7 @@
             // But for this request, it's sufficient "gatekeeping".
             if (password === 'tim2026') {
                 localStorage.setItem('authenticated', 'true');
-                window.location.href = 'home.html';
+                window.location.href = '/home/';
             } else {
                 errorMsg.style.display = 'block';
                 document.getElementById('passwordInput').value = '';

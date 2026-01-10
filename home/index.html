@@ -4,7 +4,7 @@
 <head>
     <script>
         if (localStorage.getItem('authenticated') !== 'true') {
-            window.location.href = 'index.html';
+            window.location.href = '/';
         }
     </script>
     <meta charset="UTF-8">
@@ -188,33 +188,33 @@
         </p>
     </header>
 
-    main>
-    <h2 class="section-title">Projekte</h2>
+    <main>
+        <h2 class="section-title">Projekte</h2>
 
-    <div class="project-list">
-        <a href="anchortag.html" class="project-card">
-            <div class="project-info">
-                <h3>AnchorTag</h3>
-                <p>NFC-basierte App für digitalen Fokus.</p>
-            </div>
-            <div class="project-arrow">→</div>
-        </a>
+        <div class="project-list">
+            <a href="/anchortag/" class="project-card">
+                <div class="project-info">
+                    <h3>AnchorTag</h3>
+                    <p>NFC-basierte App für digitalen Fokus.</p>
+                </div>
+                <div class="project-arrow">→</div>
+            </a>
 
-        <!-- Placeholder -->
-        <div class="project-card" style="opacity: 0.5; cursor: default;">
-            <div class="project-info">
-                <h3>Demnächst</h3>
-                <p>Weitere Arbeiten...</p>
+            <!-- Placeholder -->
+            <div class="project-card" style="opacity: 0.5; cursor: default;">
+                <div class="project-info">
+                    <h3>Demnächst</h3>
+                    <p>Weitere Arbeiten...</p>
+                </div>
             </div>
         </div>
-    </div>
     </main>
 
     <footer>
         <p>&copy; 2026 Tim Hartung</p>
         <div>
-            <a href="impressum.html">Impressum</a>
-            <a href="datenschutz.html">Datenschutz</a>
+            <a href="/impressum/">Impressum</a>
+            <a href="/datenschutz/">Datenschutz</a>
         </div>
     </footer>
 
