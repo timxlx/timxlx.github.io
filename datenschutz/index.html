@@ -12,93 +12,107 @@
     <title>Datenschutzerklärung - AnchorTag</title>
     <style>
         :root {
-            --bg-deep: #0B1026;
-            --accent-cyan: #00F0FF;
-            --text-main: #ffffff;
-            --text-muted: #8b9bb4;
+            --bg-main: #111111;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --card-bg: #1c1c1e;
+            --border: #333333;
+            --accent: #ffffff;
         }
 
         body {
-            font-family: -apple-system, sans-serif;
-            background-color: var(--bg-deep);
-            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
             line-height: 1.6;
-            padding: 40px 20px;
-            max-width: 800px;
+            padding: 80px 20px 40px;
+            max-width: 700px;
             margin: 0 auto;
-        }
-
-        h1,
-        h2,
-        h3 {
-            color: var(--accent-cyan);
+            -webkit-font-smoothing: antialiased;
         }
 
         h1 {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 20px;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            letter-spacing: -0.02em;
         }
 
         h2 {
-            margin-top: 40px;
-            font-size: 1.3rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 60px;
             margin-bottom: 20px;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
         }
 
         h3 {
-            margin-top: 25px;
             font-size: 1.1rem;
-            color: var(--text-main);
+            margin-top: 30px;
+            color: var(--text-primary);
         }
 
         a {
-            color: var(--accent-cyan);
-            text-decoration: none;
+            color: var(--text-primary);
+            text-decoration: underline;
+            text-decoration-color: var(--text-secondary);
+            text-underline-offset: 4px;
+            transition: all 0.2s;
+        }
+
+        a:hover {
+            color: var(--text-secondary);
+            text-decoration-color: var(--text-primary);
         }
 
         .back-link {
             display: inline-block;
-            margin-bottom: 30px;
-            color: var(--text-muted);
-            transition: color 0.2s;
+            margin-bottom: 40px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
         }
 
         .back-link:hover {
-            color: var(--text-main);
+            color: var(--text-primary);
         }
 
-        .legal-block {
-            background: rgba(255, 255, 255, 0.03);
-            padding: 30px;
-            border-radius: 12px;
-            margin-bottom: 20px;
+        .legal-block p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5em;
+        }
+
+        .legal-block strong {
+            color: var(--text-primary);
         }
 
         ul {
             padding-left: 20px;
-            color: var(--text-muted);
+            color: var(--text-secondary);
+            margin-bottom: 1.5em;
         }
 
         li {
-            margin-bottom: 8px;
+            margin-bottom: 5px;
         }
 
         footer {
-            margin-top: 60px;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding-top: 20px;
+            margin-top: 80px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            padding-top: 30px;
         }
     </style>
 </head>
 
 <body>
 
-    <a href="/home/" class="back-link">← Zurück zur Startseite</a>
+    <a href="/home/" class="back-link">← Zurück</a>
 
     <h1>Datenschutzerklärung</h1>
 
