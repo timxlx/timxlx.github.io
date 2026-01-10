@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AnchorTag - Realität zurückgewinnen.</title>
+    <title>Tim Hartung - Developer Portfolio</title>
     <style>
         /* DEEP OCEAN DESIGN SYSTEM */
         :root {
@@ -13,6 +14,7 @@
             --text-main: #ffffff;
             --text-muted: #8b9bb4;
             --card-bg: rgba(255, 255, 255, 0.05);
+            --card-hover: rgba(255, 255, 255, 0.08);
         }
 
         body {
@@ -25,125 +27,140 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            text-align: center;
         }
 
-        /* HERO SECTION */
-        .hero {
-            padding: 100px 20px 60px;
+        /* HEADER / HERO */
+        header {
+            padding: 80px 20px 40px;
+            text-align: center;
+            width: 100%;
             max-width: 800px;
+            box-sizing: border-box;
             animation: fadeIn 1s ease-out;
         }
 
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--card-bg), var(--bg-deep));
+            border: 2px solid var(--accent-cyan);
+            box-shadow: 0 0 20px var(--accent-glow);
+            margin-bottom: 25px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
         h1 {
-            font-size: clamp(2.5rem, 5vw, 4rem); /* Responsive Textgröße */
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
             font-weight: 800;
             letter-spacing: -0.02em;
-            line-height: 1.1;
-            margin-bottom: 24px;
+            margin: 0 0 15px 0;
+            background: linear-gradient(120deg, var(--text-main), var(--accent-cyan));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .highlight {
-            color: var(--accent-cyan);
-            text-shadow: 0 0 20px var(--accent-glow);
-        }
-
-        p.subtitle {
+        p.bio {
             font-size: 1.2rem;
             color: var(--text-muted);
             line-height: 1.6;
-            margin-bottom: 40px;
             max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
+            margin: 0 auto 40px;
         }
 
-        /* ANCHOR ICON ANIMATION */
-        .anchor-icon {
-            font-size: 80px;
-            margin-bottom: 30px;
-            display: inline-block;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* CTA BUTTON */
-        .download-btn {
-            background-color: var(--text-main);
-            color: var(--bg-deep);
-            padding: 18px 36px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            display: inline-block;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-
-        .download-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px var(--accent-glow);
-            background-color: var(--accent-cyan);
-        }
-
-        /* FEATURES GRID */
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            max-width: 1000px;
-            padding: 40px 20px 80px;
+        /* CARD GRID */
+        main {
             width: 100%;
+            max-width: 1000px;
+            padding: 20px 20px 60px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
             box-sizing: border-box;
         }
 
-        .feature-card {
+        .card {
             background: var(--card-bg);
+            border-radius: 20px;
             padding: 30px;
-            border-radius: 24px;
+            text-decoration: none;
+            color: var(--text-main);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            text-align: left;
-            transition: transform 0.2s;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            min-height: 220px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .feature-card:hover {
+        .card:hover {
             transform: translateY(-5px);
-            border-color: rgba(0, 240, 255, 0.2);
+            background: var(--card-hover);
+            border-color: rgba(0, 240, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
-        .feature-card h3 {
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
             color: var(--accent-cyan);
-            margin-top: 0;
-            font-size: 1.3rem;
-            margin-bottom: 10px;
         }
 
-        .feature-card p {
+        .card h2 {
+            margin: 0 0 10px 0;
+            font-size: 1.5rem;
+        }
+
+        .card p {
             color: var(--text-muted);
+            font-size: 0.95rem;
             line-height: 1.5;
             margin: 0;
         }
 
+        .card-arrow {
+            margin-top: 20px;
+            color: var(--accent-cyan);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            opacity: 0.8;
+        }
+
+        .card:hover .card-arrow {
+            opacity: 1;
+            padding-left: 5px;
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         /* FOOTER */
         footer {
-            margin-top: auto;
             padding: 40px;
             font-size: 0.9rem;
             color: var(--text-muted);
-            border-top: 1px solid rgba(255,255,255,0.05);
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
             width: 100%;
-            box-sizing: border-box;
+            margin-top: auto;
         }
 
         footer a {
@@ -158,41 +175,45 @@
         }
     </style>
 </head>
+
 <body>
 
-    <div class="hero">
-        <div class="anchor-icon">⚓️</div>
-        <h1>Wirf den Anker.<br><span class="highlight">Gewinne deine Zeit.</span></h1>
-        
-        <p class="subtitle">
-            Die kostenlose, privatsphäre-freundliche Alternative zu teurer Hardware. 
-            Nutze jeden NFC-Tag, den du bereits besitzt, um Apps physisch zu sperren.
+    <header>
+        <div class="avatar">TH</div>
+        <h1>Tim Hartung</h1>
+        <p class="bio">
+            Entwickler, Student & Creative Mind.<br>
+            Ich baue Apps, die Probleme lösen und dabei gut aussehen.
         </p>
+    </header>
 
-        <a href="https://apps.apple.com/de/app/..." class="download-btn">
-            Laden im App Store
+    <main>
+        <!-- AnchorTag Project Card -->
+        <a href="anchortag.html" class="card">
+            <div>
+                <div class="card-icon">⚓️</div>
+                <h2>AnchorTag</h2>
+                <p>NFC-basierte App für digitalen Fokus. Sperre Apps physisch und gewinne deine Zeit zurück.</p>
+            </div>
+            <div class="card-arrow">Projekt ansehen →</div>
         </a>
-    </div>
 
-    <div class="features">
-        <div class="feature-card">
-            <h3>💸 100% Kostenlos</h3>
-            <p>Du brauchst keine 50€ ausgeben. Nutze deine alte Hotelkarte, deinen Skipass oder Nintendo Amiibos als Schlüssel.</p>
+        <!-- Placeholder for future projects, maybe Caventura? -->
+        <div class="card" style="opacity: 0.6; cursor: default;">
+            <div>
+                <div class="card-icon">🚧</div>
+                <h2>Coming Soon</h2>
+                <p>Weitere Projekte in Arbeit.</p>
+            </div>
         </div>
-        <div class="feature-card">
-            <h3>🔒 Privacy First</h3>
-            <p>Deine Daten gehören dir. Keine Accounts, kein Tracking, keine Werbung. Alles läuft lokal auf deinem iPhone.</p>
-        </div>
-        <div class="feature-card">
-            <h3>🌊 Deep Ocean Design</h3>
-            <p>Ein Interface, das beruhigt. Mit Monthly Recaps und "Yearly Wrapped" Statistiken, die motivieren.</p>
-        </div>
-    </div>
+    </main>
 
     <footer>
         <p>&copy; 2026 Tim Hartung</p>
-        <a href="legal.html">Impressum & Datenschutz</a>
+        <a href="impressum.html">Impressum</a>
+        <a href="datenschutz.html">Datenschutz</a>
     </footer>
 
 </body>
+
 </html>
