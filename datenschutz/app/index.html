@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datenschutz - AnchorTag App</title>
+    <style>
+        :root {
+            --bg-deep: #050505;
+            --text-main: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --accent-cyan: #0e7490;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        /* NAVIGATION */
+        nav {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: fit-content;
+            padding: 12px 30px;
+            display: flex;
+            gap: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 100px;
+            z-index: 1000;
+        }
+
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        nav a:hover {
+            color: var(--text-main);
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 180px 20px 80px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #fff, #aaa);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--accent-cyan);
+            margin-bottom: 60px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+        }
+
+        h2 {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-main);
+            margin-top: 60px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            margin-top: 40px;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        p,
+        li {
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 1.2em;
+            font-size: 1.05rem;
+        }
+
+        strong {
+            color: white;
+        }
+
+        ul {
+            padding-left: 20px;
+            color: var(--text-muted);
+        }
+
+        a.text-link {
+            color: white;
+            text-decoration: underline;
+            text-decoration-color: rgba(255, 255, 255, 0.3);
+        }
+
+        footer {
+            margin-top: 100px;
+            padding-top: 40px;
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        /* Background Aurora Subtle */
+        .aurora-hint {
+            position: fixed;
+            top: -20%;
+            right: -20%;
+            width: 80vw;
+            height: 80vw;
+            background: radial-gradient(circle, #0e7490 0%, transparent 60%);
+            opacity: 0.15;
+            z-index: -1;
+            filter: blur(100px);
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="aurora-hint"></div>
+
+    <nav>
+        <a href="/home/">Tim Hartung</a>
+        <a href="/impressum/">Kontakt</a>
+    </nav>
+
+    <div class="container">
+        <h1>Datenschutz</h1>
+        <div class="subtitle">AnchorTag App</div>
+
+        <div class="content-block">
+            <!-- DEUTSCH -->
+            <div id="de">
+                <p><strong>Stand: Januar 2026</strong></p>
+
+                <h2>1. Einleitung</h2>
+                <p>Wir freuen uns, dass Sie "AnchorTag" nutzen. Der Schutz Ihrer Privatsphäre ist für uns nicht nur eine
+                    gesetzliche Pflicht, sondern die Kernphilosophie dieser App ("Privacy First"). Im Folgenden
+                    informieren wir Sie darüber, welche Daten bei der Nutzung unserer App erhoben und wie sie
+                    verarbeitet werden.</p>
+
+                <h2>2. Verantwortlicher</h2>
+                <p>Verantwortlich im Sinne der Datenschutz-Grundverordnung (DSGVO) und anderer nationaler
+                    Datenschutzgesetze ist:</p>
+                <p>
+                    <strong>Tim Hartung</strong><br>
+                    Iggelheimer Str. 38<br>
+                    67105 Schifferstadt<br>
+                    Deutschland<br>
+                    E-Mail: <a href="mailto:dev@timhartung.de" class="text-link">dev@timhartung.de</a>
+                </p>
+
+                <h2>3. Datenspeicherung auf Ihrem Endgerät (Local First)</h2>
+                <p>Die App ist so konzipiert, dass sie primär lokal arbeitet. Alle personenbezogenen Daten, die im
+                    Zusammenhang mit Ihren Fokus- oder Schlafphasen stehen, werden zunächst ausschließlich auf dem
+                    internen Speicher Ihres iPhones abgelegt.</p>
+                <ul>
+                    <li><strong>Verarbeitete Daten:</strong> Start- und Endzeiten, Dauer, Kategorie (Fokus/Schlaf),
+                        zugewiesene IDs (UUIDs) und App-Einstellungen (z.B. Sprache).</li>
+                    <li><strong>Technologie:</strong> Wir nutzen zur lokalen Speicherung die Apple-Technologie
+                        "SwiftData" sowie "UserDefaults" für Einstellungen.</li>
+                </ul>
+
+                <h2>4. Synchronisation via iCloud (Private Database)</h2>
+                <p>Um Ihnen die Nutzung der App auf mehreren Geräten zu ermöglichen und Datenverlust vorzubeugen, nutzt
+                    die App den Dienst "iCloud" von Apple.</p>
+                <ul>
+                    <li><strong>Funktionsweise:</strong> Ihre lokalen Daten werden automatisch in Ihre private
+                        iCloud-Datenbank ("CloudKit Private Database") gespiegelt.</li>
+                    <li><strong>Zugriff:</strong> Diese Daten sind ausschließlich Ihrem persönlichen Apple-Account
+                        zugeordnet. Wir als Entwickler haben technisch keinerlei Zugriff auf diese Daten. Wir können
+                        Ihre gespeicherten Einträge weder lesen, noch verändern oder entschlüsseln.</li>
+                    <li><strong>Sicherheit:</strong> Die Übertragung und Speicherung erfolgt verschlüsselt nach den
+                        Sicherheitsstandards von Apple.</li>
+                </ul>
+
+                <h2>5. Hosting und Datenverarbeitung durch Apple (USA-Transfer)</h2>
+                <p>Für die unter Punkt 4 und 6 genannte Cloud-Infrastruktur nutzen wir Dienste der Apple Inc., One Apple
+                    Park Way, Cupertino, California, USA, 95014.</p>
+                <ul>
+                    <li><strong>Drittlandübermittlung:</strong> Obwohl wir Apple als technischen Dienstleister nutzen,
+                        bestimmt sich der Speicherort Ihrer Daten primär nach den Einstellungen Ihres Apple-Accounts.
+                        Apple verarbeitet Daten weltweit, sodass eine Übermittlung auf Server in den USA (einem
+                        Drittland außerhalb der EU) nicht ausgeschlossen werden kann.</li>
+                    <li><strong>Rechtsgrundlage:</strong> Die Nutzung von iCloud erfolgt auf Basis des zwischen Ihnen
+                        und Apple bestehenden Nutzungsvertrages. Weitere Informationen zum Datenschutz bei Apple finden
+                        Sie unter: <a href="https://www.apple.com/legal/privacy/de-ww/" class="text-link"
+                            target="_blank">https://www.apple.com/legal/privacy/de-ww/</a></li>
+                </ul>
+
+                <h2>6. Community-Statistiken & Pseudonymisierung (Global Impact)</h2>
+                <p>Ein Feature der App ist die Anzeige der weltweiten Gesamtsumme an Fokus- und Schlafstunden ("Global
+                    Impact"). Hierfür übermittelt die App nach Beendigung einer Session minimale Daten an eine
+                    öffentliche Datenbank ("CloudKit Public Database").</p>
+                <ul>
+                    <li><strong>Übermittelte Daten:</strong> Dauer der Session (in Sekunden), Kategorie ("focus" oder
+                        "sleep") und das Datum.</li>
+                    <li><strong>Technische Kennung (Creator ID):</strong> Aus technischen Gründen fügt die
+                        Apple-CloudKit-Infrastruktur jedem Eintrag in der öffentlichen Datenbank automatisch eine
+                        kryptische Kennung hinzu (sog. "Creator User Record ID").</li>
+                    <li><strong>Keine Identifizierung durch uns:</strong> Diese ID ist eine zufällige Zeichenfolge
+                        (Pseudonym). Wir als Entwickler können theoretisch sehen, welche Einträge zur selben ID gehören
+                        (z.B. um Spam zu erkennen), wir haben jedoch keine Möglichkeit, diese ID einer realen Person,
+                        einem Namen oder einer E-Mail-Adresse zuzuordnen. Ihre Identität bleibt für uns unsichtbar.
+                        Andere Nutzer der App haben keinen Zugriff auf diese IDs, sondern sehen nur die aufsummierten
+                        Gesamtzahlen.</li>
+                </ul>
+
+                <h2>7. Nutzung der NFC-Funktion</h2>
+                <p>Die App greift auf die NFC-Schnittstelle Ihres Gerätes zu, um "AnchorTags" zu scannen.</p>
+                <ul>
+                    <li><strong>Zweck:</strong> Prüfung, ob ein Tag einen validen Link (anchor://...) enthält, um den
+                        Timer zu steuern.</li>
+                    <li><strong>Verarbeitung:</strong> Diese Prüfung findet ausschließlich lokal auf Ihrem Gerät statt.
+                        Es werden keine Standortdaten oder Bewegungsprofile durch den Scan an uns übermittelt.</li>
+                </ul>
+
+                <h2>8. Ihre Rechte</h2>
+                <p>Sie haben das Recht auf Auskunft, Berichtigung, Löschung und Einschränkung der Verarbeitung Ihrer
+                    personenbezogenen Daten.</p>
+                <p>Da wir als Entwickler keinen Zugriff auf Ihre in der privaten iCloud gespeicherten Daten haben,
+                    können Sie Ihre Rechte am effektivsten direkt über die App oder Ihre Apple-Account-Einstellungen
+                    wahrnehmen:</p>
+                <ul>
+                    <li><strong>Löschung:</strong> Wenn Sie Einträge in der App löschen, werden diese lokal und in Ihrer
+                        privaten iCloud entfernt.</li>
+                    <li><strong>Widerruf:</strong> Sie können die iCloud-Synchronisation für diese App jederzeit in den
+                        iOS-Einstellungen deaktivieren.</li>
+                </ul>
+            </div>
+
+            <hr style="margin: 80px 0; border: 0; border-top: 1px solid var(--glass-border);">
+
+            <!-- ENGLISH -->
+            <div id="en">
+                <h1>Privacy Policy</h1>
+                <p><strong>Last updated: January 2026</strong></p>
+
+                <h2>1. Introduction</h2>
+                <p>Thank you for using "AnchorTag". Protecting your privacy is not just a legal obligation for us, but
+                    the core philosophy of this app ("Privacy First"). Below we inform you about which data is collected
+                    when using our app and how it is processed.</p>
+
+                <h2>2. Controller</h2>
+                <p>The controller within the meaning of the General Data Protection Regulation (GDPR) and other national
+                    data protection laws is:</p>
+                <p>
+                    <strong>Tim Hartung</strong><br>
+                    Iggelheimer Str. 38<br>
+                    67105 Schifferstadt<br>
+                    Germany<br>
+                    Email: <a href="mailto:dev@timhartung.de" class="text-link">dev@timhartung.de</a>
+                </p>
+
+                <h2>3. Data Storage on Your Device (Local First)</h2>
+                <p>The app is designed to work primarily locally. All personal data related to your focus or sleep
+                    phases are initially stored exclusively on your iPhone's internal storage.</p>
+                <ul>
+                    <li><strong>Processed Data:</strong> Start and end times, duration, category (focus/sleep), assigned
+                        IDs (UUIDs), and app settings (e.g., language).</li>
+                    <li><strong>Technology:</strong> We use Apple's "SwiftData" technology for local storage and
+                        "UserDefaults" for settings.</li>
+                </ul>
+
+                <h2>4. Synchronization via iCloud (Private Database)</h2>
+                <p>To enable app usage across multiple devices and prevent data loss, the app uses Apple's "iCloud"
+                    service.</p>
+                <ul>
+                    <li><strong>Functionality:</strong> Your local data is automatically mirrored to your private iCloud
+                        database ("CloudKit Private Database").</li>
+                    <li><strong>Access:</strong> This data is associated exclusively with your personal Apple account.
+                        We, as developers, have technically no access to this data. We cannot read, modify, or decrypt
+                        your stored entries.</li>
+                    <li><strong>Security:</strong> Transmission and storage are encrypted according to Apple's security
+                        standards.</li>
+                </ul>
+
+                <h2>5. Hosting and Data Processing by Apple (International Transfer)</h2>
+                <p>For the cloud infrastructure mentioned in Sections 4 and 6, we use services provided by Apple Inc.,
+                    One Apple Park Way, Cupertino, California, USA, 95014.</p>
+                <ul>
+                    <li><strong>Data Transfer:</strong> Although we use Apple as a technical service provider, the
+                        physical storage location of your data is primarily determined by your Apple account settings.
+                        Apple processes data globally; therefore, a transfer to servers in the USA (outside the EU/EEA)
+                        cannot be ruled out.</li>
+                    <li><strong>Legal Basis:</strong> The use of iCloud is based on the user agreement existing between
+                        you and Apple. For more information on Apple's privacy practices, please visit: <a
+                            href="https://www.apple.com/legal/privacy/en-ww/" class="text-link"
+                            target="_blank">https://www.apple.com/legal/privacy/en-ww/</a></li>
+                </ul>
+
+                <h2>6. Community Statistics & Pseudonymization (Global Impact)</h2>
+                <p>A feature of the app is displaying the worldwide total of focus and sleep hours ("Global Impact").
+                    For this purpose, the app transmits minimal data to a public database ("CloudKit Public Database")
+                    after a session ends.</p>
+                <ul>
+                    <li><strong>Transmitted Data:</strong> Session duration (in seconds), category ("focus" or "sleep"),
+                        and the date.</li>
+                    <li><strong>Technical Identifier (Creator ID):</strong> For technical reasons, Apple's CloudKit
+                        infrastructure automatically attaches a cryptic identifier to every record in the public
+                        database (so-called "Creator User Record ID").</li>
+                    <li><strong>No Identification by Us:</strong> This ID is a random string of characters (pseudonym).
+                        While we as developers can technically see which records belong to the same ID (e.g., to detect
+                        spam), we have no way to link this ID to a real person, name, or email address. Your identity
+                        remains invisible to us. Other users of the app do not have access to these IDs but only see the
+                        aggregated totals.</li>
+                </ul>
+
+                <h2>7. Use of NFC Functionality</h2>
+                <p>The app accesses your device's NFC interface to scan "AnchorTags".</p>
+                <ul>
+                    <li><strong>Purpose:</strong> To check if a tag contains a valid link (anchor://...) to control the
+                        timer.</li>
+                    <li><strong>Processing:</strong> This check takes place exclusively locally on your device. No
+                        location data or movement profiles are transmitted to us through the scan.</li>
+                </ul>
+
+                <h2>8. Your Rights</h2>
+                <p>You have the right to access, rectification, erasure, and restriction of processing of your personal
+                    data.</p>
+                <p>Since we, as developers, have no access to your data stored in the private iCloud, you can exercise
+                    your rights most effectively directly via the app or your Apple account settings:</p>
+                <ul>
+                    <li><strong>Deletion:</strong> Deleting entries within the app removes them locally and from your
+                        private iCloud.</li>
+                    <li><strong>Revocation:</strong> You can disable iCloud synchronization for this app at any time in
+                        your iOS settings.</li>
+                </ul>
+            </div>
+        </div>
+
+        <footer>
+            &copy; 2026 Tim Hartung
+        </footer>
+    </div>
+
+</body>
+
+</html>
