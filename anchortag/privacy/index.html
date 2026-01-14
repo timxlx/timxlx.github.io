@@ -143,6 +143,28 @@
             filter: blur(100px);
             pointer-events: none;
         }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 700px) {
+            .container {
+                padding: 120px 20px 60px;
+                /* Reduced top padding */
+            }
+
+            nav {
+                top: 20px;
+                padding: 10px 20px;
+                width: 90%;
+                /* Ensure it fits on screen */
+                max-width: 300px;
+                justify-content: center;
+            }
+
+            h1 {
+                font-size: 2rem;
+                /* Slightly smaller heading */
+            }
+        }
     </style>
 </head>
 
