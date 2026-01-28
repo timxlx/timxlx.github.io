@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datenschutz - Trust Issues</title>
+    <style>
+        :root {
+            --bg-deep: #050505;
+            --text-main: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 80px 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 60px;
+            background: linear-gradient(to right, #fff, #aaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            color: var(--text-main);
+        }
+
+        .content-block {
+            margin-bottom: 60px;
+        }
+
+        p {
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 1.5em;
+            font-size: 1.1rem;
+        }
+
+        strong {
+            color: white;
+        }
+
+        a {
+            color: white;
+            text-decoration: underline;
+            text-decoration-color: rgba(255, 255, 255, 0.3);
+            text-underline-offset: 4px;
+        }
+
+        a:hover {
+            text-decoration-color: rgba(255, 255, 255, 0.6);
+        }
+
+        footer {
+            margin-top: 100px;
+            padding-top: 40px;
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        /* Background Aurora Subtle */
+        .aurora-hint {
+            position: fixed;
+            top: -20%;
+            right: -20%;
+            width: 80vw;
+            height: 80vw;
+            background: radial-gradient(circle, #4c1d95 0%, transparent 60%);
+            opacity: 0.2;
+            z-index: -1;
+            filter: blur(100px);
+            pointer-events: none;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 700px) {
+            .container {
+                padding: 60px 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="aurora-hint"></div>
+
+    <div class="container">
+        <h1>Datenschutzerklärung</h1>
+        <p><em>Stand: Januar 2026</em></p>
+
+        <h2>1. Verantwortlicher</h2>
+        <p>Verantwortlicher im Sinne der Datenschutz-Grundverordnung (DSGVO) ist:</p>
+        <p>
+            <strong>Tim Hartung</strong><br>
+            Iggelheimer Str. 38<br>
+            67105 Schifferstadt<br>
+            Deutschland
+        </p>
+        <p>E-Mail: <a href="mailto:dev@timhartung.de">dev@timhartung.de</a></p>
+
+        <h2>2. Allgemeines zur Datenverarbeitung</h2>
+        <p>Der Schutz deiner Privatsphäre hat für die App "Trust Issues" oberste Priorität. Wir verfolgen den Ansatz der
+            absoluten Datensparsamkeit ("Privacy by Design"). Die App ist so konzipiert, dass sie vollständig offline
+            funktioniert und keine personenbezogenen Daten an Server des Verantwortlichen übermittelt.</p>
+
+        <h2>3. Art und Umfang der Datenverarbeitung</h2>
+
+        <h3>3.1. Keine Online-Datenerhebung</h3>
+        <p>Die Nutzung der App ist ohne Registrierung möglich. Wir verwenden keine serverseitigen Tracking-Tools (wie
+            Google Analytics, Firebase Analytics), keine Werbenetzwerke und keine Analyse-Software von Drittanbietern.
+        </p>
+
+        <h3>3.2. Lokale Verarbeitung von Spielernamen</h3>
+        <p>Um die Spielfunktionalität zu gewährleisten (z. B. Zuweisung der Rollen "Zivilist" oder "Imposter"), können
+            Namen oder Pseudonyme in die App eingegeben werden.</p>
+        <ul>
+            <li><strong>Verarbeitung:</strong> Diese Eingaben werden ausschließlich temporär im flüchtigen
+                Arbeitsspeicher (RAM) deines Endgeräts verarbeitet.</li>
+            <li><strong>Systemtastatur:</strong> Die Eingabe erfolgt über die Tastatur des Betriebssystems (iOS). Auf
+                Funktionen der Tastatur (z. B. Autokorrektur, Wortvorschläge), die vom Betriebssystem verwaltet werden,
+                hat die App keinen Einfluss.</li>
+            <li><strong>Löschung:</strong> Es erfolgt keine dauerhafte Speicherung in Datenbanken oder Cookies. Sobald
+                die App vollständig geschlossen (beendet) wird, werden die Spiel-Daten unwiderruflich aus dem
+                Arbeitsspeicher entfernt.</li>
+        </ul>
+
+        <h3>3.3. Technische Protokolle (Absturzberichte)</h3>
+        <p>Sollte die App abstürzen, kann das Betriebssystem (Apple iOS) standardmäßig anonymisierte Fehlerprotokolle
+            erstellen. Sofern du der Übermittlung von Diagnose- und Nutzungsdaten an App-Entwickler in deinen
+            Systemeinstellungen zugestimmt hast, werden diese anonymen technischen Protokolle an uns via Apple
+            übertragen. Diese enthalten keine personenbezogenen Daten der Spieler, sondern lediglich technische
+            Informationen zum Absturzzeitpunkt (z. B. Gerätetyp, Betriebssystemversion, Stack Trace), die zur
+            Fehlerbehebung dienen.</p>
+
+        <h2>4. Berechtigungen</h2>
+        <p>Die App fordert nur das technische Minimum an Berechtigungen an:</p>
+        <ul>
+            <li><strong>Kein Internetzugriff:</strong> Die App besitzt keine Berechtigung, Daten an unsere Server zu
+                senden.</li>
+            <li><strong>Keine Sensoren:</strong> Es erfolgt kein Zugriff auf Kamera, Mikrofon, Standort (GPS), Kontakte
+                oder Fotos.</li>
+            <li><strong>Keine Push-Benachrichtigungen:</strong> Die App versendet keine Benachrichtigungen.</li>
+        </ul>
+
+        <h2>5. Download über den Apple App Store</h2>
+        <p>Der Download, die Installation und Updates der App erfolgen über den App Store von Apple. Hierbei werden
+            Informationen (z. B. Apple-ID, Gerätekennung, Zahlungsdaten bei In-App-Käufen, sofern vorhanden) an Apple
+            übertragen. Auf diese Datenerhebung haben wir keinen Einfluss; sie unterliegt den Datenschutzbestimmungen
+            von Apple. Verantwortliche Stelle für den Store-Prozess ist Apple.</p>
+
+        <h2>6. Deine Rechte</h2>
+        <p>Gemäß der DSGVO stehen dir grundsätzlich Rechte auf Auskunft, Berichtigung, Löschung und Einschränkung der
+            Verarbeitung zu (Art. 15–18 DSGVO).</p>
+        <p>Da die App "Trust Issues" jedoch keine personenbezogenen Daten speichert oder an uns übermittelt, liegen uns
+            keine Daten vor, die wir dir zuordnen, beauskunften oder löschen könnten. Die Löschung deiner lokalen
+            Spieldaten kannst du jederzeit selbst durch das Beenden der App oder die Deinstallation der App vornehmen.
+        </p>
+
+        <h2>7. Kontakt</h2>
+        <p>Bei Fragen zum Datenschutz kannst du dich jederzeit an die oben genannte E-Mail-Adresse wenden: <a
+                href="mailto:dev@timhartung.de">dev@timhartung.de</a></p>
+
+        <footer>
+            &copy; 2026 Tim Hartung · <a href="/impressum/">Impressum</a>
+        </footer>
+    </div>
+
+</body>
+
+</html>
