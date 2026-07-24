@@ -51,7 +51,7 @@
 
         header.page-head {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 40px;
         }
 
         h1 {
@@ -72,6 +72,15 @@
             font-weight: 600;
         }
 
+        .hint {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin: 0 auto 30px;
+            max-width: 420px;
+            line-height: 1.5;
+        }
+
         /* MONTH */
         .month {
             margin-bottom: 40px;
@@ -82,7 +91,6 @@
             font-weight: 600;
             margin: 0 0 16px;
             padding-left: 4px;
-            letter-spacing: 0.02em;
         }
 
         .weekdays {
@@ -98,7 +106,6 @@
             font-weight: 600;
             color: var(--text-faint);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
         }
 
         .grid {
@@ -117,7 +124,7 @@
             font-weight: 500;
             position: relative;
             border: 1px solid transparent;
-            transition: transform 0.12s ease, box-shadow 0.2s ease;
+            transition: transform 0.12s ease;
         }
 
         .cell.blank {
@@ -133,20 +140,27 @@
             color: var(--text-main);
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
+            cursor: pointer;
+        }
+
+        .cell.in:active {
+            transform: scale(0.9);
         }
 
         .cell.colored {
             color: #fff;
             font-weight: 700;
-            border-color: transparent;
         }
 
-        body.editing .cell.in {
-            cursor: pointer;
-        }
-
-        body.editing .cell.in:active {
-            transform: scale(0.9);
+        /* kleiner Punkt = für Admin: dieser Tag hat Anfragen */
+        .cell .dot {
+            position: absolute;
+            bottom: 6px;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #fff;
+            opacity: 0.85;
         }
 
         /* LEGEND */
@@ -177,7 +191,7 @@
             flex-shrink: 0;
         }
 
-        /* EDIT BUTTON */
+        /* FAB (Admin-Login) */
         .fab {
             position: fixed;
             bottom: 24px;
@@ -195,7 +209,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 1000;
+            z-index: 900;
             transition: color 0.2s, border-color 0.2s;
         }
 
@@ -204,84 +218,103 @@
             border-color: rgba(255, 255, 255, 0.2);
         }
 
-        /* EDIT TOOLBAR */
-        .toolbar {
+        .fab.admin-on {
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        /* MODAL */
+        .overlay {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(15, 15, 18, 0.85);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border-top: 1px solid var(--glass-border);
-            padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
-            z-index: 1100;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
             display: none;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        body.editing .toolbar {
-            display: flex;
-        }
-
-        body.editing .fab {
-            display: none;
-        }
-
-        .tools {
-            display: flex;
-            gap: 10px;
+            align-items: flex-end;
             justify-content: center;
-            flex-wrap: wrap;
+            z-index: 1000;
         }
 
-        .tool {
-            width: 40px;
-            height: 40px;
+        .overlay.show {
+            display: flex;
+        }
+
+        .sheet {
+            width: 100%;
+            max-width: 520px;
+            background: rgba(18, 18, 22, 0.96);
+            border: 1px solid var(--glass-border);
+            border-bottom: none;
+            border-radius: 22px 22px 0 0;
+            padding: 26px 22px calc(26px + env(safe-area-inset-bottom));
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        @media (min-width: 560px) {
+            .overlay {
+                align-items: center;
+            }
+            .sheet {
+                border-radius: 22px;
+                border-bottom: 1px solid var(--glass-border);
+            }
+        }
+
+        .sheet h2 {
+            margin: 0 0 4px;
+            font-size: 1.3rem;
+        }
+
+        .sheet .sub {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin: 0 0 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin: 14px 0 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px 14px;
             border-radius: 12px;
-            border: 2px solid transparent;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            color: #fff;
-            transition: transform 0.12s;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-main);
+            font-size: 1rem;
+            font-family: inherit;
         }
 
-        .tool.active {
-            border-color: #fff;
-            transform: scale(1.08);
+        textarea {
+            resize: vertical;
+            min-height: 60px;
         }
 
-        .tool.eraser {
-            background: rgba(255, 255, 255, 0.08);
-            border: 2px dashed rgba(255, 255, 255, 0.3);
-        }
-
-        .tool.eraser.active {
-            border-color: #fff;
-            border-style: solid;
-        }
-
-        .bar-row {
-            display: flex;
-            gap: 10px;
-            align-items: center;
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
         }
 
         .btn {
-            flex: 1;
-            padding: 12px;
+            width: 100%;
+            padding: 13px;
             border-radius: 12px;
             border: 1px solid var(--glass-border);
             background: var(--glass-bg);
             color: var(--text-main);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
             font-family: inherit;
+            margin-top: 16px;
         }
 
         .btn.primary {
@@ -289,24 +322,85 @@
             border-color: var(--accent);
         }
 
+        .btn.ghost {
+            background: transparent;
+            margin-top: 8px;
+        }
+
         .btn:disabled {
             opacity: 0.4;
             cursor: default;
         }
 
-        .status {
-            text-align: center;
-            font-size: 0.8rem;
-            color: var(--text-muted);
+        .row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .row .btn {
+            flex: 1;
+        }
+
+        .msg {
+            font-size: 0.85rem;
+            margin-top: 12px;
             min-height: 1em;
         }
 
-        .status.error {
-            color: #f85149;
+        .msg.error { color: #f85149; }
+        .msg.ok { color: #3fb950; }
+
+        /* Admin: Farbwahl */
+        .palette {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 8px;
         }
 
-        .status.ok {
-            color: #3fb950;
+        .pal {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .pal.sel {
+            border-color: #fff;
+        }
+
+        /* Admin: Anfrageliste */
+        .req {
+            padding: 12px 14px;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .req .who { font-weight: 600; }
+        .req .note { color: var(--text-muted); font-size: 0.9rem; margin-top: 4px; }
+        .req .when { color: var(--text-faint); font-size: 0.75rem; margin-top: 6px; }
+
+        .req .del {
+            background: none;
+            border: none;
+            color: #f85149;
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 4px;
+            flex-shrink: 0;
+        }
+
+        .empty {
+            color: var(--text-faint);
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 16px 0;
         }
 
         footer {
@@ -325,23 +419,12 @@
             text-underline-offset: 3px;
         }
 
-        footer a:hover {
-            color: var(--text-main);
-        }
+        footer a:hover { color: var(--text-main); }
 
         @media (max-width: 700px) {
-            .container {
-                padding: 60px 14px 120px;
-            }
-
-            h1 {
-                font-size: 1.9rem;
-            }
-
-            .cell {
-                border-radius: 10px;
-                font-size: 0.85rem;
-            }
+            .container { padding: 60px 14px 120px; }
+            h1 { font-size: 1.9rem; }
+            .cell { border-radius: 10px; font-size: 0.85rem; }
         }
     </style>
 </head>
@@ -355,6 +438,10 @@
             <div class="subtitle">15. August – 8. November</div>
         </header>
 
+        <p class="hint" id="publicHint">
+            Tippe auf einen freien Tag, um dich einzutragen. Farbige Tage sind bereits belegt.
+        </p>
+
         <div id="calendar"></div>
 
         <div class="legend" id="legend"></div>
@@ -364,33 +451,31 @@
         </footer>
     </div>
 
-    <div class="fab" id="fab" title="Bearbeiten">✏️</div>
+    <div class="fab" id="fab" title="Admin">🔑</div>
 
-    <div class="toolbar">
-        <div class="tools" id="tools"></div>
-        <div class="status" id="status"></div>
-        <div class="bar-row">
-            <button class="btn" id="exitBtn">Fertig</button>
-            <button class="btn primary" id="saveBtn" disabled>Speichern</button>
-        </div>
+    <!-- Modal -->
+    <div class="overlay" id="overlay">
+        <div class="sheet" id="sheet"></div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // ---- Konfiguration ----
-        const REPO_OWNER = "timxlx";
-        const REPO_NAME = "timxlx.github.io";
-        const DATA_PATH = "basel26/data.json";
-        const BRANCH = "main";
+        // ============================================================
+        //  KONFIGURATION  – hier deine zwei Supabase-Werte eintragen
+        // ============================================================
+        const SUPABASE_URL = "https://iefstoizlbguygvbhtlc.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_ITpX7k3mHn0gYs9jSvnxzw_ao0NAzTf"; // öffentlicher publishable key (darf sichtbar sein)
 
+        // Zeitraum
         const START = new Date(2026, 7, 15); // 15. Aug 2026
         const END = new Date(2026, 10, 8);   // 8. Nov 2026
 
-        // Farbpalette: key -> {color, label}
+        // Farbpalette (Bedeutung kannst du frei umbenennen)
         const PALETTE = {
-            green:  { color: "#3fb950", label: "Frei" },
-            amber:  { color: "#d29922", label: "Vielleicht" },
-            red:    { color: "#f85149", label: "Belegt" },
-            blue:   { color: "#388bfd", label: "Reise" },
+            green:  { color: "#3fb950", label: "Belegt" },
+            amber:  { color: "#d29922", label: "Option" },
+            red:    { color: "#f85149", label: "Reserviert" },
+            blue:   { color: "#388bfd", label: "Privat" },
             purple: { color: "#a371f7", label: "Sonstiges" },
         };
 
@@ -398,28 +483,37 @@
             "Juli", "August", "September", "Oktober", "November", "Dezember"];
         const WEEKDAYS_DE = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
 
-        // ---- Zustand ----
-        let data = {};          // "YYYY-MM-DD" -> paletteKey
-        let dirty = false;
-        let activeTool = "green";
-        let editing = false;
+        // ---- Supabase-Client ----
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // ---- Hilfsfunktionen ----
+        // ---- Zustand ----
+        let days = {};      // "YYYY-MM-DD" -> paletteKey (von dir gefärbt)
+        let reqCount = {};   // "YYYY-MM-DD" -> Anzahl Anfragen (nur Admin)
+        let isAdmin = false;
+
+        // ---- Helfer ----
         function iso(d) {
             return d.getFullYear() + "-" +
                 String(d.getMonth() + 1).padStart(2, "0") + "-" +
                 String(d.getDate()).padStart(2, "0");
         }
-        function inRange(d) {
-            return d >= START && d <= END;
+        function inRange(d) { return d >= START && d <= END; }
+        function fmtDate(isoStr) {
+            const [y, m, dd] = isoStr.split("-");
+            return dd + ". " + MONTHS_DE[parseInt(m) - 1] + " " + y;
+        }
+        function fmtWhen(ts) {
+            const d = new Date(ts);
+            return String(d.getDate()).padStart(2, "0") + "." +
+                String(d.getMonth() + 1).padStart(2, "0") + "." + d.getFullYear() +
+                ", " + String(d.getHours()).padStart(2, "0") + ":" +
+                String(d.getMinutes()).padStart(2, "0");
         }
 
         // ---- Kalender rendern ----
         function renderCalendar() {
             const cal = document.getElementById("calendar");
             cal.innerHTML = "";
-
-            // von Start-Monat bis End-Monat
             let y = START.getFullYear(), m = START.getMonth();
             const endY = END.getFullYear(), endM = END.getMonth();
 
@@ -445,7 +539,7 @@
                 grid.className = "grid";
 
                 const first = new Date(y, m, 1);
-                const lead = (first.getDay() + 6) % 7; // Montag = 0
+                const lead = (first.getDay() + 6) % 7;
                 const daysInMonth = new Date(y, m + 1, 0).getDate();
 
                 for (let i = 0; i < lead; i++) {
@@ -459,10 +553,11 @@
                     const cell = document.createElement("div");
                     cell.textContent = day;
                     if (inRange(d)) {
+                        const key = iso(d);
                         cell.className = "cell in";
-                        cell.dataset.date = iso(d);
-                        applyCellColor(cell);
-                        cell.addEventListener("click", onCellClick);
+                        cell.dataset.date = key;
+                        colorCell(cell);
+                        cell.addEventListener("click", () => onDayClick(key));
                     } else {
                         cell.className = "cell out";
                     }
@@ -471,39 +566,34 @@
 
                 monthEl.appendChild(grid);
                 cal.appendChild(monthEl);
-
                 m++;
                 if (m > 11) { m = 0; y++; }
             }
         }
 
-        function applyCellColor(cell) {
-            const key = data[cell.dataset.date];
+        function colorCell(cell) {
+            const key = days[cell.dataset.date];
+            cell.querySelectorAll(".dot").forEach(x => x.remove());
             if (key && PALETTE[key]) {
                 cell.classList.add("colored");
                 cell.style.background = PALETTE[key].color;
             } else {
                 cell.classList.remove("colored");
                 cell.style.background = "";
+                // Admin: Punkt zeigen, wenn Anfragen vorliegen
+                if (isAdmin && reqCount[cell.dataset.date]) {
+                    const dot = document.createElement("span");
+                    dot.className = "dot";
+                    cell.appendChild(dot);
+                }
             }
         }
 
-        function onCellClick(e) {
-            if (!editing) return;
-            const cell = e.currentTarget;
-            const date = cell.dataset.date;
-            if (activeTool === "eraser") {
-                delete data[date];
-            } else if (data[date] === activeTool) {
-                delete data[date]; // gleiche Farbe erneut = entfernen
-            } else {
-                data[date] = activeTool;
-            }
-            applyCellColor(cell);
-            setDirty(true);
+        function refreshCells() {
+            document.querySelectorAll(".cell.in").forEach(colorCell);
         }
 
-        // ---- Legende & Werkzeuge ----
+        // ---- Legende ----
         function renderLegend() {
             const el = document.getElementById("legend");
             el.innerHTML = "";
@@ -519,147 +609,233 @@
             });
         }
 
-        function renderTools() {
-            const el = document.getElementById("tools");
-            el.innerHTML = "";
-            Object.entries(PALETTE).forEach(([key, p]) => {
-                const t = document.createElement("div");
-                t.className = "tool" + (key === activeTool ? " active" : "");
-                t.style.background = p.color;
-                t.title = p.label;
-                t.dataset.key = key;
-                t.addEventListener("click", () => setTool(key));
-                el.appendChild(t);
+        // ---- Modal-Helfer ----
+        const overlay = document.getElementById("overlay");
+        const sheet = document.getElementById("sheet");
+        function openSheet(html) { sheet.innerHTML = html; overlay.classList.add("show"); }
+        function closeSheet() { overlay.classList.remove("show"); sheet.innerHTML = ""; }
+        overlay.addEventListener("click", e => { if (e.target === overlay) closeSheet(); });
+
+        // ---- Klick auf einen Tag ----
+        function onDayClick(dateKey) {
+            if (isAdmin) openAdminDay(dateKey);
+            else openPublicDay(dateKey);
+        }
+
+        // ---- Öffentlich: Tag anschauen / eintragen ----
+        function openPublicDay(dateKey) {
+            const key = days[dateKey];
+            if (key) {
+                // belegt
+                openSheet(`
+                    <h2>${fmtDate(dateKey)}</h2>
+                    <p class="sub">Dieser Tag ist bereits belegt${PALETTE[key] ? " · " + PALETTE[key].label : ""}.</p>
+                    <button class="btn ghost" onclick="closeSheet()">Schließen</button>
+                `);
+                return;
+            }
+            openSheet(`
+                <h2>Eintragen</h2>
+                <p class="sub">${fmtDate(dateKey)}</p>
+                <label for="f_name">Name</label>
+                <input id="f_name" type="text" maxlength="80" placeholder="Dein Name" autocomplete="name">
+                <label for="f_note">Notiz (optional)</label>
+                <textarea id="f_note" maxlength="300" placeholder="z.B. Grund oder Uhrzeit"></textarea>
+                <div class="msg" id="f_msg"></div>
+                <button class="btn primary" id="f_send">Absenden</button>
+                <button class="btn ghost" onclick="closeSheet()">Abbrechen</button>
+            `);
+            document.getElementById("f_send").addEventListener("click", () => submitRequest(dateKey));
+        }
+
+        async function submitRequest(dateKey) {
+            const name = document.getElementById("f_name").value.trim();
+            const note = document.getElementById("f_note").value.trim();
+            const msg = document.getElementById("f_msg");
+            const btn = document.getElementById("f_send");
+            if (!name) { msg.className = "msg error"; msg.textContent = "Bitte einen Namen eingeben."; return; }
+            btn.disabled = true; msg.className = "msg"; msg.textContent = "Sende …";
+            const { error } = await db.from("requests").insert({ day: dateKey, name, note: note || null });
+            if (error) {
+                msg.className = "msg error";
+                msg.textContent = "Konnte nicht senden. Vielleicht ist der Tag inzwischen belegt.";
+                btn.disabled = false;
+                return;
+            }
+            openSheet(`
+                <h2>Danke!</h2>
+                <p class="sub">Dein Eintrag für ${fmtDate(dateKey)} ist eingegangen. Tim meldet sich.</p>
+                <button class="btn primary" onclick="closeSheet()">Schließen</button>
+            `);
+        }
+
+        // ---- Admin: Login ----
+        function openLogin() {
+            openSheet(`
+                <h2>Admin-Login</h2>
+                <p class="sub">Nur für Tim.</p>
+                <label for="l_mail">E-Mail</label>
+                <input id="l_mail" type="email" autocomplete="username" placeholder="dev@timhartung.de">
+                <label for="l_pw">Passwort</label>
+                <input id="l_pw" type="password" autocomplete="current-password">
+                <div class="msg" id="l_msg"></div>
+                <button class="btn primary" id="l_btn">Einloggen</button>
+                <button class="btn ghost" onclick="closeSheet()">Abbrechen</button>
+            `);
+            document.getElementById("l_btn").addEventListener("click", doLogin);
+        }
+
+        async function doLogin() {
+            const email = document.getElementById("l_mail").value.trim();
+            const password = document.getElementById("l_pw").value;
+            const msg = document.getElementById("l_msg");
+            const btn = document.getElementById("l_btn");
+            btn.disabled = true; msg.className = "msg"; msg.textContent = "Prüfe …";
+            const { error } = await db.auth.signInWithPassword({ email, password });
+            if (error) {
+                msg.className = "msg error"; msg.textContent = "Login fehlgeschlagen.";
+                btn.disabled = false; return;
+            }
+            closeSheet();
+            await enterAdmin();
+        }
+
+        async function enterAdmin() {
+            isAdmin = true;
+            document.getElementById("fab").classList.add("admin-on");
+            document.getElementById("fab").textContent = "🔓";
+            document.getElementById("publicHint").textContent =
+                "Admin-Modus: Tippe auf einen Tag, um Anfragen zu sehen und Farben zu vergeben.";
+            await loadRequestsCounts();
+            refreshCells();
+        }
+
+        async function logout() {
+            await db.auth.signOut();
+            isAdmin = false;
+            reqCount = {};
+            document.getElementById("fab").classList.remove("admin-on");
+            document.getElementById("fab").textContent = "🔑";
+            document.getElementById("publicHint").textContent =
+                "Tippe auf einen freien Tag, um dich einzutragen. Farbige Tage sind bereits belegt.";
+            refreshCells();
+            closeSheet();
+        }
+
+        // ---- Admin: Tages-Panel ----
+        async function openAdminDay(dateKey) {
+            openSheet(`<h2>${fmtDate(dateKey)}</h2><p class="sub">Lade …</p>`);
+            const { data: reqs, error } = await db.from("requests")
+                .select("*").eq("day", dateKey).order("created_at", { ascending: true });
+            const currentKey = days[dateKey];
+
+            let palHtml = '<label>Farbe / Status vergeben</label><div class="palette">';
+            Object.entries(PALETTE).forEach(([k, p]) => {
+                palHtml += `<div class="pal ${currentKey === k ? "sel" : ""}" style="background:${p.color}" title="${p.label}" onclick="setDayColor('${dateKey}','${k}')"></div>`;
             });
-            const eraser = document.createElement("div");
-            eraser.className = "tool eraser" + (activeTool === "eraser" ? " active" : "");
-            eraser.textContent = "⌫";
-            eraser.title = "Entfernen";
-            eraser.dataset.key = "eraser";
-            eraser.addEventListener("click", () => setTool("eraser"));
-            el.appendChild(eraser);
+            palHtml += '</div>';
+
+            let clearBtn = currentKey
+                ? `<button class="btn ghost" onclick="setDayColor('${dateKey}', null)">Farbe entfernen (wieder freigeben)</button>`
+                : "";
+
+            let reqHtml = "";
+            if (error) {
+                reqHtml = `<div class="msg error">Anfragen konnten nicht geladen werden.</div>`;
+            } else if (!reqs.length) {
+                reqHtml = `<div class="empty">Keine Anfragen für diesen Tag.</div>`;
+            } else {
+                reqs.forEach(r => {
+                    reqHtml += `
+                        <div class="req">
+                            <div>
+                                <div class="who">${esc(r.name)}</div>
+                                ${r.note ? `<div class="note">${esc(r.note)}</div>` : ""}
+                                <div class="when">${fmtWhen(r.created_at)}</div>
+                            </div>
+                            <button class="del" title="Löschen" onclick="delRequest('${r.id}','${dateKey}')">🗑</button>
+                        </div>`;
+                });
+            }
+
+            openSheet(`
+                <h2>${fmtDate(dateKey)}</h2>
+                <p class="sub">${currentKey ? "Belegt · " + (PALETTE[currentKey] ? PALETTE[currentKey].label : "") : (reqs && reqs.length ? reqs.length + " Anfrage(n)" : "Frei")}</p>
+                ${palHtml}
+                ${clearBtn}
+                <label style="margin-top:20px">Anfragen</label>
+                ${reqHtml}
+                <button class="btn ghost" onclick="closeSheet()">Schließen</button>
+            `);
         }
 
-        function setTool(key) {
-            activeTool = key;
-            document.querySelectorAll("#tools .tool").forEach(t => {
-                t.classList.toggle("active", t.dataset.key === key);
-            });
+        function esc(s) {
+            return String(s).replace(/[&<>"']/g, c =>
+                ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
         }
 
-        function setDirty(v) {
-            dirty = v;
-            document.getElementById("saveBtn").disabled = !v;
+        async function setDayColor(dateKey, key) {
+            if (key === null) {
+                const { error } = await db.from("days").delete().eq("day", dateKey);
+                if (!error) delete days[dateKey];
+            } else {
+                const { error } = await db.from("days").upsert({ day: dateKey, color: key });
+                if (!error) days[dateKey] = key;
+            }
+            refreshCells();
+            openAdminDay(dateKey);
         }
 
-        function setStatus(msg, type) {
-            const s = document.getElementById("status");
-            s.textContent = msg || "";
-            s.className = "status" + (type ? " " + type : "");
+        async function delRequest(id, dateKey) {
+            await db.from("requests").delete().eq("id", id);
+            await loadRequestsCounts();
+            refreshCells();
+            openAdminDay(dateKey);
         }
 
         // ---- Daten laden ----
-        async function loadData() {
-            try {
-                const res = await fetch("data.json?t=" + Date.now(), { cache: "no-store" });
-                if (res.ok) {
-                    data = await res.json();
-                }
-            } catch (e) {
-                data = {};
+        async function loadDays() {
+            const { data, error } = await db.from("days").select("day,color");
+            days = {};
+            if (!error && data) data.forEach(r => { days[r.day] = r.color; });
+        }
+
+        async function loadRequestsCounts() {
+            reqCount = {};
+            const { data, error } = await db.from("requests").select("day");
+            if (!error && data) data.forEach(r => { reqCount[r.day] = (reqCount[r.day] || 0) + 1; });
+        }
+
+        // ---- FAB ----
+        document.getElementById("fab").addEventListener("click", () => {
+            if (isAdmin) {
+                openSheet(`
+                    <h2>Admin</h2>
+                    <p class="sub">Du bist eingeloggt.</p>
+                    <button class="btn" onclick="logout()">Ausloggen</button>
+                    <button class="btn ghost" onclick="closeSheet()">Schließen</button>
+                `);
+            } else {
+                openLogin();
             }
-            renderCalendar();
-        }
-
-        // ---- Bearbeiten ein/aus ----
-        function getToken() {
-            return localStorage.getItem("basel26_token") || "";
-        }
-
-        function enterEdit() {
-            let token = getToken();
-            if (!token) {
-                token = prompt(
-                    "GitHub-Token eingeben (wird nur lokal auf diesem Gerät gespeichert):"
-                );
-                if (!token) return;
-                token = token.trim();
-                localStorage.setItem("basel26_token", token);
-            }
-            editing = true;
-            document.body.classList.add("editing");
-            setStatus("");
-        }
-
-        function exitEdit() {
-            editing = false;
-            document.body.classList.remove("editing");
-            setStatus("");
-        }
-
-        // ---- Speichern via GitHub API ----
-        async function save() {
-            const token = getToken();
-            if (!token) { setStatus("Kein Token vorhanden.", "error"); return; }
-
-            setStatus("Speichere …");
-            document.getElementById("saveBtn").disabled = true;
-
-            const apiBase = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_PATH}`;
-            const headers = {
-                "Authorization": "token " + token,
-                "Accept": "application/vnd.github+json",
-            };
-
-            try {
-                // aktuellen sha holen (für Update nötig)
-                let sha = undefined;
-                const getRes = await fetch(apiBase + "?ref=" + BRANCH + "&t=" + Date.now(), {
-                    headers, cache: "no-store"
-                });
-                if (getRes.ok) {
-                    sha = (await getRes.json()).sha;
-                } else if (getRes.status !== 404) {
-                    throw new Error("Laden fehlgeschlagen (" + getRes.status + ")");
-                }
-
-                const json = JSON.stringify(data, null, 2) + "\n";
-                const content = btoa(unescape(encodeURIComponent(json)));
-
-                const putRes = await fetch(apiBase, {
-                    method: "PUT",
-                    headers,
-                    body: JSON.stringify({
-                        message: "Update basel26 Kalender",
-                        content: content,
-                        branch: BRANCH,
-                        sha: sha,
-                    }),
-                });
-
-                if (!putRes.ok) {
-                    const err = await putRes.json().catch(() => ({}));
-                    if (putRes.status === 401) throw new Error("Token ungültig oder abgelaufen.");
-                    if (putRes.status === 404) throw new Error("Kein Schreibzugriff (Token-Rechte prüfen).");
-                    throw new Error(err.message || ("Fehler " + putRes.status));
-                }
-
-                setDirty(false);
-                setStatus("Gespeichert ✓ (in ~1 Min. für alle sichtbar)", "ok");
-            } catch (e) {
-                setStatus(e.message || "Speichern fehlgeschlagen.", "error");
-                document.getElementById("saveBtn").disabled = false;
-            }
-        }
+        });
 
         // ---- Init ----
-        document.getElementById("fab").addEventListener("click", enterEdit);
-        document.getElementById("exitBtn").addEventListener("click", exitEdit);
-        document.getElementById("saveBtn").addEventListener("click", save);
+        async function init() {
+            renderLegend();
+            await loadDays();
+            renderCalendar();
+            // bereits eingeloggt? (Session bleibt gespeichert)
+            const { data: { session } } = await db.auth.getSession();
+            if (session) await enterAdmin();
+        }
+        init();
 
-        renderLegend();
-        renderTools();
-        loadData();
+        // global für inline-onclick
+        window.closeSheet = closeSheet;
+        window.setDayColor = setDayColor;
+        window.delRequest = delRequest;
+        window.logout = logout;
     </script>
 </body>
 
