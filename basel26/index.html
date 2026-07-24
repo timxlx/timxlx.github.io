@@ -318,6 +318,17 @@
             text-align: center;
         }
 
+        footer a {
+            color: var(--text-muted);
+            text-decoration: underline;
+            text-decoration-color: rgba(255, 255, 255, 0.3);
+            text-underline-offset: 3px;
+        }
+
+        footer a:hover {
+            color: var(--text-main);
+        }
+
         @media (max-width: 700px) {
             .container {
                 padding: 60px 14px 120px;
@@ -348,7 +359,9 @@
 
         <div class="legend" id="legend"></div>
 
-        <footer>&copy; 2026 Tim Hartung</footer>
+        <footer>
+            &copy; 2026 Tim Hartung &middot; <a href="/impressum/">Impressum</a>
+        </footer>
     </div>
 
     <div class="fab" id="fab" title="Bearbeiten">✏️</div>
