@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basel 2026 · Kalender</title>
+    <style>
+        :root {
+            --bg-deep: #050505;
+            --text-main: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --text-faint: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --accent: #7c3aed;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .aurora-hint {
+            position: fixed;
+            top: -20%;
+            right: -20%;
+            width: 80vw;
+            height: 80vw;
+            background: radial-gradient(circle, var(--accent) 0%, transparent 60%);
+            opacity: 0.15;
+            z-index: -1;
+            filter: blur(100px);
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 90px 18px 120px;
+        }
+
+        header.page-head {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            margin: 0 0 12px;
+            background: linear-gradient(to right, #fff, #aaa);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-weight: 600;
+        }
+
+        /* MONTH */
+        .month {
+            margin-bottom: 40px;
+        }
+
+        .month-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0 0 16px;
+            padding-left: 4px;
+            letter-spacing: 0.02em;
+        }
+
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .weekdays span {
+            text-align: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-faint);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+        }
+
+        .cell {
+            aspect-ratio: 1 / 1;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            font-weight: 500;
+            position: relative;
+            border: 1px solid transparent;
+            transition: transform 0.12s ease, box-shadow 0.2s ease;
+        }
+
+        .cell.blank {
+            visibility: hidden;
+        }
+
+        .cell.out {
+            color: var(--text-faint);
+            background: rgba(255, 255, 255, 0.015);
+        }
+
+        .cell.in {
+            color: var(--text-main);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+        }
+
+        .cell.colored {
+            color: #fff;
+            font-weight: 700;
+            border-color: transparent;
+        }
+
+        body.editing .cell.in {
+            cursor: pointer;
+        }
+
+        body.editing .cell.in:active {
+            transform: scale(0.9);
+        }
+
+        /* LEGEND */
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px 22px;
+            justify-content: center;
+            margin: 10px 0 0;
+            padding: 20px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .swatch {
+            width: 16px;
+            height: 16px;
+            border-radius: 5px;
+            flex-shrink: 0;
+        }
+
+        /* EDIT BUTTON */
+        .fab {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        .fab:hover {
+            color: var(--text-main);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* EDIT TOOLBAR */
+        .toolbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 15, 18, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-top: 1px solid var(--glass-border);
+            padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+            z-index: 1100;
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        body.editing .toolbar {
+            display: flex;
+        }
+
+        body.editing .fab {
+            display: none;
+        }
+
+        .tools {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .tool {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: #fff;
+            transition: transform 0.12s;
+        }
+
+        .tool.active {
+            border-color: #fff;
+            transform: scale(1.08);
+        }
+
+        .tool.eraser {
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+        }
+
+        .tool.eraser.active {
+            border-color: #fff;
+            border-style: solid;
+        }
+
+        .bar-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            color: var(--text-main);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .btn.primary {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: default;
+        }
+
+        .status {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            min-height: 1em;
+        }
+
+        .status.error {
+            color: #f85149;
+        }
+
+        .status.ok {
+            color: #3fb950;
+        }
+
+        footer {
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                padding: 60px 14px 120px;
+            }
+
+            h1 {
+                font-size: 1.9rem;
+            }
+
+            .cell {
+                border-radius: 10px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="aurora-hint"></div>
+
+    <div class="container">
+        <header class="page-head">
+            <h1>Basel 2026</h1>
+            <div class="subtitle">15. August – 8. November</div>
+        </header>
+
+        <div id="calendar"></div>
+
+        <div class="legend" id="legend"></div>
+
+        <footer>&copy; 2026 Tim Hartung</footer>
+    </div>
+
+    <div class="fab" id="fab" title="Bearbeiten">✏️</div>
+
+    <div class="toolbar">
+        <div class="tools" id="tools"></div>
+        <div class="status" id="status"></div>
+        <div class="bar-row">
+            <button class="btn" id="exitBtn">Fertig</button>
+            <button class="btn primary" id="saveBtn" disabled>Speichern</button>
+        </div>
+    </div>
+
+    <script>
+        // ---- Konfiguration ----
+        const REPO_OWNER = "timxlx";
+        const REPO_NAME = "timxlx.github.io";
+        const DATA_PATH = "basel26/data.json";
+        const BRANCH = "main";
+
+        const START = new Date(2026, 7, 15); // 15. Aug 2026
+        const END = new Date(2026, 10, 8);   // 8. Nov 2026
+
+        // Farbpalette: key -> {color, label}
+        const PALETTE = {
+            green:  { color: "#3fb950", label: "Frei" },
+            amber:  { color: "#d29922", label: "Vielleicht" },
+            red:    { color: "#f85149", label: "Belegt" },
+            blue:   { color: "#388bfd", label: "Reise" },
+            purple: { color: "#a371f7", label: "Sonstiges" },
+        };
+
+        const MONTHS_DE = ["Januar", "Februar", "März", "April", "Mai", "Juni",
+            "Juli", "August", "September", "Oktober", "November", "Dezember"];
+        const WEEKDAYS_DE = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
+
+        // ---- Zustand ----
+        let data = {};          // "YYYY-MM-DD" -> paletteKey
+        let dirty = false;
+        let activeTool = "green";
+        let editing = false;
+
+        // ---- Hilfsfunktionen ----
+        function iso(d) {
+            return d.getFullYear() + "-" +
+                String(d.getMonth() + 1).padStart(2, "0") + "-" +
+                String(d.getDate()).padStart(2, "0");
+        }
+        function inRange(d) {
+            return d >= START && d <= END;
+        }
+
+        // ---- Kalender rendern ----
+        function renderCalendar() {
+            const cal = document.getElementById("calendar");
+            cal.innerHTML = "";
+
+            // von Start-Monat bis End-Monat
+            let y = START.getFullYear(), m = START.getMonth();
+            const endY = END.getFullYear(), endM = END.getMonth();
+
+            while (y < endY || (y === endY && m <= endM)) {
+                const monthEl = document.createElement("div");
+                monthEl.className = "month";
+
+                const title = document.createElement("div");
+                title.className = "month-name";
+                title.textContent = MONTHS_DE[m] + " " + y;
+                monthEl.appendChild(title);
+
+                const wd = document.createElement("div");
+                wd.className = "weekdays";
+                WEEKDAYS_DE.forEach(w => {
+                    const s = document.createElement("span");
+                    s.textContent = w;
+                    wd.appendChild(s);
+                });
+                monthEl.appendChild(wd);
+
+                const grid = document.createElement("div");
+                grid.className = "grid";
+
+                const first = new Date(y, m, 1);
+                const lead = (first.getDay() + 6) % 7; // Montag = 0
+                const daysInMonth = new Date(y, m + 1, 0).getDate();
+
+                for (let i = 0; i < lead; i++) {
+                    const b = document.createElement("div");
+                    b.className = "cell blank";
+                    grid.appendChild(b);
+                }
+
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const d = new Date(y, m, day);
+                    const cell = document.createElement("div");
+                    cell.textContent = day;
+                    if (inRange(d)) {
+                        cell.className = "cell in";
+                        cell.dataset.date = iso(d);
+                        applyCellColor(cell);
+                        cell.addEventListener("click", onCellClick);
+                    } else {
+                        cell.className = "cell out";
+                    }
+                    grid.appendChild(cell);
+                }
+
+                monthEl.appendChild(grid);
+                cal.appendChild(monthEl);
+
+                m++;
+                if (m > 11) { m = 0; y++; }
+            }
+        }
+
+        function applyCellColor(cell) {
+            const key = data[cell.dataset.date];
+            if (key && PALETTE[key]) {
+                cell.classList.add("colored");
+                cell.style.background = PALETTE[key].color;
+            } else {
+                cell.classList.remove("colored");
+                cell.style.background = "";
+            }
+        }
+
+        function onCellClick(e) {
+            if (!editing) return;
+            const cell = e.currentTarget;
+            const date = cell.dataset.date;
+            if (activeTool === "eraser") {
+                delete data[date];
+            } else if (data[date] === activeTool) {
+                delete data[date]; // gleiche Farbe erneut = entfernen
+            } else {
+                data[date] = activeTool;
+            }
+            applyCellColor(cell);
+            setDirty(true);
+        }
+
+        // ---- Legende & Werkzeuge ----
+        function renderLegend() {
+            const el = document.getElementById("legend");
+            el.innerHTML = "";
+            Object.values(PALETTE).forEach(p => {
+                const item = document.createElement("div");
+                item.className = "legend-item";
+                const sw = document.createElement("span");
+                sw.className = "swatch";
+                sw.style.background = p.color;
+                item.appendChild(sw);
+                item.appendChild(document.createTextNode(p.label));
+                el.appendChild(item);
+            });
+        }
+
+        function renderTools() {
+            const el = document.getElementById("tools");
+            el.innerHTML = "";
+            Object.entries(PALETTE).forEach(([key, p]) => {
+                const t = document.createElement("div");
+                t.className = "tool" + (key === activeTool ? " active" : "");
+                t.style.background = p.color;
+                t.title = p.label;
+                t.dataset.key = key;
+                t.addEventListener("click", () => setTool(key));
+                el.appendChild(t);
+            });
+            const eraser = document.createElement("div");
+            eraser.className = "tool eraser" + (activeTool === "eraser" ? " active" : "");
+            eraser.textContent = "⌫";
+            eraser.title = "Entfernen";
+            eraser.dataset.key = "eraser";
+            eraser.addEventListener("click", () => setTool("eraser"));
+            el.appendChild(eraser);
+        }
+
+        function setTool(key) {
+            activeTool = key;
+            document.querySelectorAll("#tools .tool").forEach(t => {
+                t.classList.toggle("active", t.dataset.key === key);
+            });
+        }
+
+        function setDirty(v) {
+            dirty = v;
+            document.getElementById("saveBtn").disabled = !v;
+        }
+
+        function setStatus(msg, type) {
+            const s = document.getElementById("status");
+            s.textContent = msg || "";
+            s.className = "status" + (type ? " " + type : "");
+        }
+
+        // ---- Daten laden ----
+        async function loadData() {
+            try {
+                const res = await fetch("data.json?t=" + Date.now(), { cache: "no-store" });
+                if (res.ok) {
+                    data = await res.json();
+                }
+            } catch (e) {
+                data = {};
+            }
+            renderCalendar();
+        }
+
+        // ---- Bearbeiten ein/aus ----
+        function getToken() {
+            return localStorage.getItem("basel26_token") || "";
+        }
+
+        function enterEdit() {
+            let token = getToken();
+            if (!token) {
+                token = prompt(
+                    "GitHub-Token eingeben (wird nur lokal auf diesem Gerät gespeichert):"
+                );
+                if (!token) return;
+                token = token.trim();
+                localStorage.setItem("basel26_token", token);
+            }
+            editing = true;
+            document.body.classList.add("editing");
+            setStatus("");
+        }
+
+        function exitEdit() {
+            editing = false;
+            document.body.classList.remove("editing");
+            setStatus("");
+        }
+
+        // ---- Speichern via GitHub API ----
+        async function save() {
+            const token = getToken();
+            if (!token) { setStatus("Kein Token vorhanden.", "error"); return; }
+
+            setStatus("Speichere …");
+            document.getElementById("saveBtn").disabled = true;
+
+            const apiBase = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_PATH}`;
+            const headers = {
+                "Authorization": "token " + token,
+                "Accept": "application/vnd.github+json",
+            };
+
+            try {
+                // aktuellen sha holen (für Update nötig)
+                let sha = undefined;
+                const getRes = await fetch(apiBase + "?ref=" + BRANCH + "&t=" + Date.now(), {
+                    headers, cache: "no-store"
+                });
+                if (getRes.ok) {
+                    sha = (await getRes.json()).sha;
+                } else if (getRes.status !== 404) {
+                    throw new Error("Laden fehlgeschlagen (" + getRes.status + ")");
+                }
+
+                const json = JSON.stringify(data, null, 2) + "\n";
+                const content = btoa(unescape(encodeURIComponent(json)));
+
+                const putRes = await fetch(apiBase, {
+                    method: "PUT",
+                    headers,
+                    body: JSON.stringify({
+                        message: "Update basel26 Kalender",
+                        content: content,
+                        branch: BRANCH,
+                        sha: sha,
+                    }),
+                });
+
+                if (!putRes.ok) {
+                    const err = await putRes.json().catch(() => ({}));
+                    if (putRes.status === 401) throw new Error("Token ungültig oder abgelaufen.");
+                    if (putRes.status === 404) throw new Error("Kein Schreibzugriff (Token-Rechte prüfen).");
+                    throw new Error(err.message || ("Fehler " + putRes.status));
+                }
+
+                setDirty(false);
+                setStatus("Gespeichert ✓ (in ~1 Min. für alle sichtbar)", "ok");
+            } catch (e) {
+                setStatus(e.message || "Speichern fehlgeschlagen.", "error");
+                document.getElementById("saveBtn").disabled = false;
+            }
+        }
+
+        // ---- Init ----
+        document.getElementById("fab").addEventListener("click", enterEdit);
+        document.getElementById("exitBtn").addEventListener("click", exitEdit);
+        document.getElementById("saveBtn").addEventListener("click", save);
+
+        renderLegend();
+        renderTools();
+        loadData();
+    </script>
+</body>
+
+</html>
