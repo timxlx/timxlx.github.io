@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timer-Übersicht</title>
+    <style>
+        :root {
+            --bg-deep: #050505;
+            --text-main: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --text-faint: rgba(255, 255, 255, 0.35);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --accent: #7c3aed;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .aurora-hint {
+            position: fixed;
+            top: -20%;
+            right: -20%;
+            width: 80vw;
+            height: 80vw;
+            background: radial-gradient(circle, var(--accent) 0%, transparent 60%);
+            opacity: 0.13;
+            z-index: -1;
+            filter: blur(100px);
+            pointer-events: none;
+        }
+
+        .container {
+            flex: 1;
+            max-width: 720px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 90px 18px 60px;
+        }
+
+        header.page-head {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            margin: 0 0 12px;
+            background: linear-gradient(to right, #fff, #aaa);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-weight: 600;
+        }
+
+        .list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .timer-card {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 22px 22px 18px;
+            transition: border-color 0.2s, transform 0.12s, background 0.2s;
+        }
+
+        .timer-card:hover {
+            border-color: rgba(255, 255, 255, 0.22);
+            background: rgba(255, 255, 255, 0.07);
+        }
+
+        .timer-card:active { transform: scale(0.99); }
+
+        .tc-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .tc-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .tc-date {
+            font-size: 0.85rem;
+            color: var(--text-faint);
+            white-space: nowrap;
+        }
+
+        .tc-cd {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .tc-unit {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 12px 4px 8px;
+            text-align: center;
+        }
+
+        .tc-num {
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .tc-lbl {
+            margin-top: 6px;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-faint);
+            font-weight: 600;
+        }
+
+        .tc-done {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            padding: 8px 0;
+        }
+
+        .state {
+            text-align: center;
+            color: var(--text-faint);
+            padding: 40px 0;
+            font-size: 0.95rem;
+        }
+
+        footer {
+            padding: 30px 18px calc(30px + env(safe-area-inset-bottom));
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        footer a {
+            color: var(--text-muted);
+            text-decoration: underline;
+            text-decoration-color: rgba(255, 255, 255, 0.3);
+            text-underline-offset: 3px;
+        }
+
+        footer a:hover { color: var(--text-main); }
+
+        @media (max-width: 560px) {
+            .container { padding: 64px 14px 40px; }
+            h1 { font-size: 2rem; }
+            .tc-num { font-size: 1.25rem; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="aurora-hint"></div>
+
+    <div class="container">
+        <header class="page-head">
+            <h1>Timer-Übersicht</h1>
+            <div class="subtitle">Alle Countdowns auf einen Blick</div>
+        </header>
+
+        <div class="list" id="list"></div>
+        <div class="state" id="state">Suche Timer …</div>
+    </div>
+
+    <footer>
+        &copy; 2026 Tim Hartung &middot; <a href="/impressum/">Impressum</a>
+    </footer>
+
+    <script>
+        // Repo, in dem die Timer-Ordner liegen
+        const REPO = "timxlx/timxlx.github.io";
+        const BRANCH = "main";
+        // Ordner, die nie ein Timer sind (spart unnötige Abrufe)
+        const IGNORE = new Set(["timer-übersicht", "impressum", "docs", "basel26",
+            "anchortag", "trust_issues", ".github"]);
+
+        let timers = []; // {slug, title, dateLabel, target}
+
+        const listEl = document.getElementById("list");
+        const stateEl = document.getElementById("state");
+
+        function pad(n) { return String(n).padStart(2, "0"); }
+
+        function pick(re, html) {
+            const m = html.match(re);
+            return m ? m[1].trim() : null;
+        }
+
+        // Prüft eine einzelne Seite: ist sie ein Countdown? Dann Daten extrahieren.
+        async function inspect(slug) {
+            try {
+                const res = await fetch("/" + slug + "/?t=" + Date.now(), { cache: "no-store" });
+                if (!res.ok) return null;
+                const html = await res.text();
+                if (!/id=["']countdown["']/.test(html)) return null; // kein Timer
+                const targetStr = pick(/new Date\(\s*["']([^"']+)["']\s*\)/, html);
+                if (!targetStr) return null;
+                const target = new Date(targetStr).getTime();
+                if (isNaN(target)) return null;
+                const title = (pick(/<h1[^>]*>([\s\S]*?)<\/h1>/, html) || slug).replace(/<[^>]+>/g, "");
+                const dateLabel = (pick(/class=["']target["'][^>]*>([\s\S]*?)<\/div>/, html) || "")
+                    .replace(/<[^>]+>/g, "").trim();
+                return { slug, title, dateLabel, target };
+            } catch (e) {
+                return null;
+            }
+        }
+
+        // Ordnerliste des Repos holen (GitHub API), Timer erkennen
+        async function discover() {
+            let dirs = [];
+            try {
+                const res = await fetch(
+                    `https://api.github.com/repos/${REPO}/contents/?ref=${BRANCH}`,
+                    { headers: { "Accept": "application/vnd.github+json" } }
+                );
+                if (!res.ok) throw new Error("API " + res.status);
+                const items = await res.json();
+                dirs = items.filter(i => i.type === "dir" && !IGNORE.has(i.name)).map(i => i.name);
+                // Für später zwischenspeichern (Fallback bei Rate-Limit)
+                localStorage.setItem("timer_dirs", JSON.stringify(dirs));
+            } catch (e) {
+                // Fallback: zuletzt bekannte Ordnerliste
+                const cached = localStorage.getItem("timer_dirs");
+                dirs = cached ? JSON.parse(cached) : [];
+            }
+
+            const found = (await Promise.all(dirs.map(inspect))).filter(Boolean);
+            found.sort((a, b) => a.target - b.target); // nächster zuerst
+            return found;
+        }
+
+        function fmtDate(isoLike, fallback) {
+            return fallback || "";
+        }
+
+        function render() {
+            if (!timers.length) {
+                stateEl.textContent = "Noch keine Timer gefunden.";
+                stateEl.style.display = "";
+                return;
+            }
+            stateEl.style.display = "none";
+            listEl.innerHTML = timers.map(t => `
+                <a class="timer-card" href="/${t.slug}/">
+                    <div class="tc-top">
+                        <div class="tc-title">${escapeHtml(t.title)}</div>
+                        <div class="tc-date">${escapeHtml(t.dateLabel)}</div>
+                    </div>
+                    <div class="tc-cd" id="cd-${cssId(t.slug)}"></div>
+                </a>
+            `).join("");
+            tick();
+        }
+
+        function cssId(s) { return s.replace(/[^a-z0-9]/gi, "_"); }
+
+        function escapeHtml(s) {
+            return String(s).replace(/[&<>"']/g, c =>
+                ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+        }
+
+        function tick() {
+            const now = Date.now();
+            timers.forEach(t => {
+                const el = document.getElementById("cd-" + cssId(t.slug));
+                if (!el) return;
+                const diff = t.target - now;
+                if (diff <= 0) {
+                    el.innerHTML = '<div class="tc-done" style="grid-column:1/-1">🎓 Geschafft!</div>';
+                    return;
+                }
+                const s = Math.floor(diff / 1000);
+                const d = Math.floor(s / 86400);
+                const h = Math.floor((s % 86400) / 3600);
+                const m = Math.floor((s % 3600) / 60);
+                const sec = s % 60;
+                el.innerHTML =
+                    unit(d, "Tage") + unit(pad(h), "Std") + unit(pad(m), "Min") + unit(pad(sec), "Sek");
+            });
+        }
+
+        function unit(num, lbl) {
+            return `<div class="tc-unit"><div class="tc-num">${num}</div><div class="tc-lbl">${lbl}</div></div>`;
+        }
+
+        async function init() {
+            timers = await discover();
+            render();
+            setInterval(tick, 1000);
+        }
+        init();
+    </script>
+</body>
+
+</html>
