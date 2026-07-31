@@ -198,6 +198,24 @@
             font-size: 0.72rem; color: var(--text-faint); margin-top: 4px; font-style: italic;
         }
 
+        /* ---- Graph ---- */
+        .graph-card {
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            border-radius: 18px; padding: 14px 16px 10px; margin-bottom: 14px;
+        }
+        .graph-head {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.9rem; font-weight: 600; color: var(--text-muted); margin-bottom: 10px;
+        }
+        .graph-card canvas { width: 100% !important; height: 200px !important; }
+        .graph-empty { color: var(--text-faint); font-size: 0.85rem; text-align: center; padding: 30px 10px; line-height: 1.5; }
+        .mini-btn {
+            background: rgba(255,255,255,.04); border: 1px solid var(--glass-border);
+            color: var(--text-main); border-radius: 10px; padding: 6px 12px;
+            font-size: 0.8rem; cursor: pointer; font-family: inherit;
+        }
+        .mini-btn:hover { border-color: rgba(255,255,255,.22); }
+
         /* ---- Modal ---- */
         .overlay {
             position: fixed; inset: 0; background: rgba(0,0,0,0.6);
@@ -240,8 +258,8 @@
         const SUPABASE_URL = "https://iefstoizlbguygvbhtlc.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_ITpX7k3mHn0gYs9jSvnxzw_ao0NAzTf";
 
-        // TODO: Startdatum des 14-Tage-Plans (Tag 1). Sobald es feststeht hier eintragen.
-        const START_DATE = "2026-08-04";   // Format: YYYY-MM-DD
+        // TODO: echtes Startdatum des 14-Tage-Plans (Tag 1). Aktuell auf Testtag gesetzt.
+        const START_DATE = "2026-07-31";   // Format: YYYY-MM-DD
         const NUM_DAYS = 14;
 
         const CATEGORIES = [
@@ -522,6 +540,204 @@
             return String(s == null ? "" : s).replace(/[&<>"']/g, c =>
                 ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
         }
+
+        // ===== Zeitreihen laden =====
+        async function loadSeries(day) {
+            let hr = [], gl = [];
+            const r1 = await db.from("hr_samples").select("minute,bpm,bpm_min,bpm_max").eq("day", day).order("minute");
+            if (!r1.error && r1.data) hr = r1.data;
+            const r2 = await db.from("glucose_samples").select("minute,value,unit").eq("day", day).order("minute");
+            if (!r2.error && r2.data) gl = r2.data;
+            return { hr, gl };
+        }
+
+        // ===== Tagesgraph =====
+        let dayChart = null;
+        let chartEvents = [];
+        const EV_ICON = { aktivitaet:"🏃", essen:"🍽️", trinken:"🥤", gewicht:"⚖️", medikament:"💊", notiz:"📝" };
+
+        const eventLinePlugin = {
+            id: "eventLines",
+            afterDatasetsDraw(c) {
+                if (!c.scales.x) return;
+                const { ctx, chartArea, scales } = c;
+                chartEvents.forEach(e => {
+                    const px = scales.x.getPixelForValue(e.min);
+                    ctx.save();
+                    ctx.strokeStyle = "rgba(255,255,255,0.16)"; ctx.setLineDash([3,3]); ctx.lineWidth = 1;
+                    ctx.beginPath(); ctx.moveTo(px, chartArea.top); ctx.lineTo(px, chartArea.bottom); ctx.stroke();
+                    ctx.setLineDash([]); ctx.font = "12px sans-serif"; ctx.textAlign = "center";
+                    ctx.fillText(e.icon, px, chartArea.top - 3);
+                    ctx.restore();
+                });
+            }
+        };
+
+        async function renderChart() {
+            if (typeof Chart === "undefined") return;
+            const day = iso(dayDate(currentIndex));
+            const { hr, gl } = await loadSeries(day);
+            chartEvents = entries.filter(e => e.time).map(e => ({
+                min: (+e.time.slice(0,2))*60 + (+e.time.slice(3,5)),
+                icon: EV_ICON[e.category] || "•",
+            }));
+            const canvas = document.getElementById("dayChart");
+            const empty = document.getElementById("graphEmpty");
+            if (!canvas) return;
+            if (dayChart) { dayChart.destroy(); dayChart = null; }
+
+            if (!hr.length && !gl.length) {
+                canvas.style.display = "none"; empty.style.display = "";
+                empty.textContent = chartEvents.length
+                    ? "Ereignisse eingetragen — Puls/Blutzucker importierst du über das Menü ⋯"
+                    : "Noch keine Daten. Ereignisse unten eintragen, Puls/Blutzucker über das Menü ⋯ importieren.";
+                return;
+            }
+            canvas.style.display = ""; empty.style.display = "none";
+
+            const hhmm = x => String(Math.floor(x/60)).padStart(2,"0")+":"+String(x%60).padStart(2,"0");
+            const datasets = [];
+            if (hr.length) datasets.push({ label:"Puls", yAxisID:"y",
+                data: hr.map(r => ({ x:r.minute, y:r.bpm })),
+                borderColor:"#22c55e", borderWidth:1.6, pointRadius:0, tension:0.25 });
+            if (gl.length) datasets.push({ label:"Blutzucker", yAxisID:"y1",
+                data: gl.map(r => ({ x:r.minute, y:r.value })),
+                borderColor:"#f59e0b", borderWidth:1.6, pointRadius:0, tension:0.25 });
+
+            dayChart = new Chart(canvas, {
+                type: "line",
+                data: { datasets },
+                options: {
+                    animation: false, maintainAspectRatio: false, layout: { padding: { top: 16 } },
+                    interaction: { mode:"index", intersect:false },
+                    scales: {
+                        x: { type:"linear", min:0, max:1440,
+                             ticks:{ stepSize:180, callback:hhmm, color:"rgba(255,255,255,.4)", font:{size:10} },
+                             grid:{ color:"rgba(255,255,255,.05)" } },
+                        y: { position:"left", ticks:{ color:"rgba(255,255,255,.4)", font:{size:10} }, grid:{ color:"rgba(255,255,255,.05)" } },
+                        y1:{ position:"right", display: gl.length>0, ticks:{ color:"rgba(255,255,255,.4)", font:{size:10} }, grid:{ drawOnChartArea:false } },
+                    },
+                    plugins: { legend: { labels: { color:"rgba(255,255,255,.7)", boxWidth:12 } },
+                               tooltip: { callbacks: { title: items => hhmm(items[0].parsed.x) } } },
+                },
+                plugins: [eventLinePlugin],
+            });
+        }
+
+        // ===== Import (Fitbit Herzfrequenz JSON) =====
+        const berlinFmt = new Intl.DateTimeFormat("de-DE", { timeZone:"Europe/Berlin", year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit", hour12:false });
+        function parseFitbitUTC(s) {
+            const m = s && s.match(/(\d{2})\/(\d{2})\/(\d{2}) (\d{2}):(\d{2}):(\d{2})/);
+            if (!m) return null;
+            const n = m.map(Number);
+            return new Date(Date.UTC(2000+n[3], n[1]-1, n[2], n[4], n[5], n[6]));
+        }
+        function berlinDayMin(date) {
+            const p = {}; berlinFmt.formatToParts(date).forEach(x => p[x.type] = x.value);
+            return { day: `${p.year}-${p.month}-${p.day}`, min: (+p.hour)*60 + (+p.minute) };
+        }
+
+        function openImport() {
+            openSheet(`
+                <h2>📥 Daten importieren</h2>
+                <label>Fitbit Herzfrequenz (JSON)</label>
+                <input id="imp_hr" type="file" accept=".json,application/json">
+                <div class="msg" id="imp_msg"></div>
+                <button class="btn primary" id="imp_go">Puls importieren</button>
+                <p style="color:var(--text-faint);font-size:0.8rem;margin:18px 0 0">Blutzucker (FreeStyle Libre CSV) & Schlaf folgen, sobald je eine Beispieldatei da ist.</p>
+                <button class="btn ghost" onclick="closeSheet()">Schließen</button>`);
+            document.getElementById("imp_go").addEventListener("click", importHR);
+        }
+
+        async function importHR() {
+            const f = document.getElementById("imp_hr").files[0];
+            const msg = document.getElementById("imp_msg");
+            const btn = document.getElementById("imp_go");
+            if (!f) { msg.className="msg error"; msg.textContent="Bitte eine Datei wählen."; return; }
+            btn.disabled = true; msg.className = "msg"; msg.textContent = "Lese Datei …";
+            let raw;
+            try { raw = JSON.parse(await f.text()); }
+            catch (e) { msg.className="msg error"; msg.textContent="Datei ist kein gültiges JSON."; btn.disabled=false; return; }
+            if (!Array.isArray(raw)) { msg.className="msg error"; msg.textContent="Unerwartetes Format."; btn.disabled=false; return; }
+
+            const byMin = new Map();
+            for (const e of raw) {
+                const d = parseFitbitUTC(e.dateTime); if (!d) continue;
+                const bpm = e.value && e.value.bpm; if (bpm == null) continue;
+                const { day, min } = berlinDayMin(d);
+                const key = day + "#" + min;
+                let o = byMin.get(key);
+                if (!o) { o = { day, minute:min, sum:0, n:0, lo:1e9, hi:0 }; byMin.set(key, o); }
+                o.sum += bpm; o.n++; if (bpm<o.lo) o.lo=bpm; if (bpm>o.hi) o.hi=bpm;
+            }
+            const rows = [...byMin.values()].map(o => ({ day:o.day, minute:o.minute, bpm:Math.round(o.sum/o.n), bpm_min:o.lo, bpm_max:o.hi }));
+            if (!rows.length) { msg.className="msg error"; msg.textContent="Keine Pulswerte gefunden."; btn.disabled=false; return; }
+
+            const CH = 500;
+            for (let i=0; i<rows.length; i+=CH) {
+                msg.textContent = `Speichere … ${Math.min(i, rows.length)}/${rows.length}`;
+                const { error } = await db.from("hr_samples").upsert(rows.slice(i, i+CH), { onConflict:"day,minute" });
+                if (error) { msg.className="msg error"; msg.textContent="Fehler: "+error.message; btn.disabled=false; return; }
+            }
+            const days = [...new Set(rows.map(r=>r.day))];
+            msg.className = "msg ok"; msg.textContent = `✓ ${rows.length} Minutenwerte gespeichert (${days.length} Tag(e)).`;
+            btn.disabled = false;
+            renderChart();
+        }
+        window.openImport = openImport;
+
+        // ===== CSV-Export =====
+        const CSV_HEAD = ["Uhrzeit","Puls","Puls_min","Puls_max","Blutzucker","Aktivität","Essen","Trinken","Gewicht","Medis","Notiz"];
+        function csvCell(v) {
+            v = (v == null) ? "" : String(v);
+            return /[";\n]/.test(v) ? '"' + v.replace(/"/g,'""') + '"' : v;
+        }
+        async function dayGridRows(dayIndex) {
+            const day = iso(dayDate(dayIndex));
+            const { hr, gl } = await loadSeries(day);
+            const { data: evs } = await db.from("health_entries").select("*").eq("day", day);
+            const hrM={}, glM={}, evM={};
+            hr.forEach(r => hrM[r.minute]=r);
+            gl.forEach(r => glM[r.minute]=r);
+            (evs||[]).forEach(e => { if (e.time) { const mm=(+e.time.slice(0,2))*60+(+e.time.slice(3,5)); (evM[mm]=evM[mm]||[]).push(e); } });
+            const col = (arr, cat) => (arr||[]).filter(e=>e.category===cat).map(e => {
+                const val = (e.value!=null) ? `${e.value}${e.unit?" "+e.unit:""}` : "";
+                return e.text ? (val ? `${e.text} (${val})` : e.text) : val;
+            }).join("; ");
+            const out = [];
+            for (let m=0; m<1440; m++) {
+                const h=hrM[m], g=glM[m], ev=evM[m];
+                out.push([
+                    String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0"),
+                    h?h.bpm:"", h?h.bpm_min:"", h?h.bpm_max:"", g?g.value:"",
+                    col(ev,"aktivitaet"), col(ev,"essen"), col(ev,"trinken"), col(ev,"gewicht"), col(ev,"medikament"), col(ev,"notiz"),
+                ]);
+            }
+            return out;
+        }
+        function triggerDownload(filename, header, rows) {
+            const lines = [header.join(";")].concat(rows.map(r => r.map(csvCell).join(";")));
+            const blob = new Blob(["﻿" + lines.join("\r\n")], { type:"text/csv;charset=utf-8" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob); a.download = filename; a.click();
+            setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+        }
+        async function downloadDayCSV() {
+            const rows = await dayGridRows(currentIndex);
+            triggerDownload(`gesundheit_Tag${currentIndex+1}_${iso(dayDate(currentIndex))}.csv`, CSV_HEAD, rows);
+            closeSheet();
+        }
+        async function downloadAllCSV() {
+            let all = [];
+            for (let i=0; i<NUM_DAYS; i++) {
+                const rows = await dayGridRows(i);
+                all = all.concat(rows.map(r => ["Tag "+(i+1), iso(dayDate(i))].concat(r)));
+            }
+            triggerDownload("gesundheit_14tage.csv", ["Tag","Datum"].concat(CSV_HEAD), all);
+            closeSheet();
+        }
+        window.downloadDayCSV = downloadDayCSV;
+        window.downloadAllCSV = downloadAllCSV;
 
         // ===== Init =====
         async function init() {
