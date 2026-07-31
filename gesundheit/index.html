@@ -234,6 +234,7 @@
     <div class="overlay" id="overlay"><div class="sheet" id="sheet"></div></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
     <script>
         // ===== Konfiguration =====
         const SUPABASE_URL = "https://iefstoizlbguygvbhtlc.supabase.co";
@@ -335,6 +336,14 @@
                     <button class="nav-arrow" id="nextDay">›</button>
                 </div>
                 <div class="day-strip" id="dayStrip"></div>
+                <div class="graph-card">
+                    <div class="graph-head">
+                        <span>📈 Tagesverlauf</span>
+                        <button class="mini-btn" onclick="downloadDayCSV()">⬇︎ CSV</button>
+                    </div>
+                    <canvas id="dayChart"></canvas>
+                    <div class="graph-empty" id="graphEmpty" style="display:none"></div>
+                </div>
                 <div id="cats"></div>
                 <footer>&copy; 2026 Tim Hartung &middot; <a href="/impressum/">Impressum</a></footer>`;
             document.getElementById("prevDay").addEventListener("click", () => goDay(currentIndex - 1));
@@ -377,6 +386,7 @@
                 .select("*").eq("day", iso(d));
             entries = error ? [] : (data || []);
             renderCats();
+            renderChart();
         }
 
         function sortEntries(list) {
@@ -499,8 +509,11 @@
         function openMenu() {
             openSheet(`
                 <h2>Menü</h2>
-                <p style="color:var(--text-muted);font-size:0.9rem;margin:0 0 12px">Eingeloggt als ${escapeHtml(user ? user.email : "")}</p>
-                <button class="btn" onclick="logout()">Ausloggen</button>
+                <p style="color:var(--text-muted);font-size:0.9rem;margin:0 0 16px">Eingeloggt als ${escapeHtml(user ? user.email : "")}</p>
+                <button class="btn primary" onclick="openImport()">📥 Daten importieren</button>
+                <button class="btn" onclick="downloadDayCSV()">⬇︎ Dieser Tag als CSV</button>
+                <button class="btn" onclick="downloadAllCSV()">⬇︎ Alle 14 Tage als CSV</button>
+                <button class="btn ghost" onclick="logout()">Ausloggen</button>
                 <button class="btn ghost" onclick="closeSheet()">Schließen</button>`);
         }
         window.openMenu = openMenu;
