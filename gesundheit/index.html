@@ -640,13 +640,20 @@
         function openImport() {
             openSheet(`
                 <h2>📥 Daten importieren</h2>
-                <label>Fitbit Herzfrequenz (JSON)</label>
+                <label>❤️ Fitbit Herzfrequenz (JSON)</label>
                 <input id="imp_hr" type="file" accept=".json,application/json">
                 <div class="msg" id="imp_msg"></div>
                 <button class="btn primary" id="imp_go">Puls importieren</button>
-                <p style="color:var(--text-faint);font-size:0.8rem;margin:18px 0 0">Blutzucker (FreeStyle Libre CSV) & Schlaf folgen, sobald je eine Beispieldatei da ist.</p>
+
+                <label style="margin-top:24px">🩸 Blutzucker – FreeStyle Libre (CSV)</label>
+                <input id="imp_gl" type="file" accept=".csv,text/csv">
+                <div class="msg" id="imp_gl_msg"></div>
+                <button class="btn primary" id="imp_gl_go">Blutzucker importieren</button>
+
+                <p style="color:var(--text-faint);font-size:0.8rem;margin:20px 0 0">😴 Schlaf folgt, sobald eine Beispieldatei da ist.</p>
                 <button class="btn ghost" onclick="closeSheet()">Schließen</button>`);
             document.getElementById("imp_go").addEventListener("click", importHR);
+            document.getElementById("imp_gl_go").addEventListener("click", importGlucose);
         }
 
         async function importHR() {
@@ -681,6 +688,48 @@
             }
             const days = [...new Set(rows.map(r=>r.day))];
             msg.className = "msg ok"; msg.textContent = `✓ ${rows.length} Minutenwerte gespeichert (${days.length} Tag(e)).`;
+            btn.disabled = false;
+            renderChart();
+        }
+        async function importGlucose() {
+            const f = document.getElementById("imp_gl").files[0];
+            const msg = document.getElementById("imp_gl_msg");
+            const btn = document.getElementById("imp_gl_go");
+            if (!f) { msg.className="msg error"; msg.textContent="Bitte eine Datei wählen."; return; }
+            btn.disabled = true; msg.className = "msg"; msg.textContent = "Lese Datei …";
+            const text = await f.text();
+            const lines = text.split(/\r?\n/).filter(l => l.length);
+            const hIdx = lines.findIndex(l => l.includes("Gerätezeitstempel"));
+            if (hIdx < 0) { msg.className="msg error"; msg.textContent="Kein FreeStyle-Libre-Format erkannt."; btn.disabled=false; return; }
+            const header = lines[hIdx].split(",");
+            const iTs = header.indexOf("Gerätezeitstempel");
+            const iType = header.indexOf("Aufzeichnungstyp");
+            const iHist = header.findIndex(h => h.startsWith("Glukosewert-Verlauf"));
+            const unit = (iHist >= 0 && header[iHist].includes("mmol")) ? "mmol/L" : "mg/dL";
+            if (iTs < 0 || iType < 0 || iHist < 0) { msg.className="msg error"; msg.textContent="Spalten nicht gefunden."; btn.disabled=false; return; }
+
+            const map = new Map();
+            for (let i = hIdx+1; i < lines.length; i++) {
+                const c = lines[i].split(",");
+                if (c[iType] !== "0") continue;                // 0 = automatischer CGM-Wert
+                const v = c[iHist]; if (!v) continue;
+                const m = c[iTs].match(/(\d{2})-(\d{2})-(\d{4}) (\d{2}):(\d{2})/);
+                if (!m) continue;
+                const day = `${m[3]}-${m[2]}-${m[1]}`;
+                const min = (+m[4])*60 + (+m[5]);
+                map.set(day+"#"+min, { day, minute:min, value:Number(v), unit });
+            }
+            const rows = [...map.values()];
+            if (!rows.length) { msg.className="msg error"; msg.textContent="Keine Glukosewerte (Typ 0) gefunden."; btn.disabled=false; return; }
+
+            const CH = 500;
+            for (let i = 0; i < rows.length; i += CH) {
+                msg.textContent = `Speichere … ${Math.min(i, rows.length)}/${rows.length}`;
+                const { error } = await db.from("glucose_samples").upsert(rows.slice(i, i+CH), { onConflict:"day,minute" });
+                if (error) { msg.className="msg error"; msg.textContent="Fehler: "+error.message; btn.disabled=false; return; }
+            }
+            const days = [...new Set(rows.map(r=>r.day))];
+            msg.className = "msg ok"; msg.textContent = `✓ ${rows.length} Blutzuckerwerte gespeichert (${days.length} Tag(e)).`;
             btn.disabled = false;
             renderChart();
         }
