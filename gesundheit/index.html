@@ -640,6 +640,9 @@
         function openImport() {
             openSheet(`
                 <h2>📥 Daten importieren</h2>
+                <label style="display:flex;align-items:center;gap:9px;text-transform:none;letter-spacing:0;font-size:0.85rem;color:var(--text-main);margin:0 0 18px">
+                    <input type="checkbox" id="imp_test" style="width:auto;flex-shrink:0"> 🧪 Testmodus: Daten auf den aktuell gezeigten Tag legen
+                </label>
                 <label>❤️ Fitbit Herzfrequenz (JSON)</label>
                 <input id="imp_hr" type="file" accept=".json,application/json">
                 <div class="msg" id="imp_msg"></div>
@@ -667,14 +670,16 @@
             catch (e) { msg.className="msg error"; msg.textContent="Datei ist kein gültiges JSON."; btn.disabled=false; return; }
             if (!Array.isArray(raw)) { msg.className="msg error"; msg.textContent="Unerwartetes Format."; btn.disabled=false; return; }
 
+            const testDay = (document.getElementById("imp_test") || {}).checked ? iso(dayDate(currentIndex)) : null;
             const byMin = new Map();
             for (const e of raw) {
                 const d = parseFitbitUTC(e.dateTime); if (!d) continue;
                 const bpm = e.value && e.value.bpm; if (bpm == null) continue;
                 const { day, min } = berlinDayMin(d);
-                const key = day + "#" + min;
+                const eff = testDay || day;
+                const key = eff + "#" + min;
                 let o = byMin.get(key);
-                if (!o) { o = { day, minute:min, sum:0, n:0, lo:1e9, hi:0 }; byMin.set(key, o); }
+                if (!o) { o = { day: eff, minute:min, sum:0, n:0, lo:1e9, hi:0 }; byMin.set(key, o); }
                 o.sum += bpm; o.n++; if (bpm<o.lo) o.lo=bpm; if (bpm>o.hi) o.hi=bpm;
             }
             const rows = [...byMin.values()].map(o => ({ day:o.day, minute:o.minute, bpm:Math.round(o.sum/o.n), bpm_min:o.lo, bpm_max:o.hi }));
@@ -708,6 +713,7 @@
             const unit = (iHist >= 0 && header[iHist].includes("mmol")) ? "mmol/L" : "mg/dL";
             if (iTs < 0 || iType < 0 || iHist < 0) { msg.className="msg error"; msg.textContent="Spalten nicht gefunden."; btn.disabled=false; return; }
 
+            const testDay = (document.getElementById("imp_test") || {}).checked ? iso(dayDate(currentIndex)) : null;
             const map = new Map();
             for (let i = hIdx+1; i < lines.length; i++) {
                 const c = lines[i].split(",");
@@ -715,7 +721,7 @@
                 const v = c[iHist]; if (!v) continue;
                 const m = c[iTs].match(/(\d{2})-(\d{2})-(\d{4}) (\d{2}):(\d{2})/);
                 if (!m) continue;
-                const day = `${m[3]}-${m[2]}-${m[1]}`;
+                const day = testDay || `${m[3]}-${m[2]}-${m[1]}`;
                 const min = (+m[4])*60 + (+m[5]);
                 map.set(day+"#"+min, { day, minute:min, value:Number(v), unit });
             }
