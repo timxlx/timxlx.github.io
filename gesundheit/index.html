@@ -216,6 +216,22 @@
         }
         .mini-btn:hover { border-color: rgba(255,255,255,.22); }
 
+        /* ---- Tageskennzahlen ---- */
+        .metrics-row {
+            display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 10px;
+            margin-bottom: 14px; scrollbar-width: none;
+        }
+        .metrics-row::-webkit-scrollbar { display: none; }
+        .mtile {
+            flex: 0 0 auto; min-width: 84px; text-align: center;
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            border-radius: 14px; padding: 12px 10px 10px;
+        }
+        .mt-ic { font-size: 1.1rem; line-height: 1; }
+        .mt-val { font-size: 1.25rem; font-weight: 700; margin-top: 6px; }
+        .mt-val small { font-size: 0.65rem; font-weight: 500; color: var(--text-faint); }
+        .mt-lbl { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-faint); margin-top: 4px; }
+
         /* ---- Modal ---- */
         .overlay {
             position: fixed; inset: 0; background: rgba(0,0,0,0.6);
@@ -286,6 +302,7 @@
         let user = null;
         let currentIndex = 0;
         let entries = [];
+        let dayMetrics = {};
 
         // ===== Datum-Helfer =====
         function parseDate(s) { const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d); }
@@ -354,6 +371,7 @@
                     <button class="nav-arrow" id="nextDay">›</button>
                 </div>
                 <div class="day-strip" id="dayStrip"></div>
+                <div class="metrics-row" id="metricsRow" style="display:none"></div>
                 <div class="graph-card">
                     <div class="graph-head">
                         <span>📈 Tagesverlauf</span>
@@ -405,6 +423,7 @@
             entries = error ? [] : (data || []);
             renderCats();
             renderChart();
+            loadDayMetrics();
         }
 
         function sortEntries(list) {
@@ -653,10 +672,16 @@
                 <div class="msg" id="imp_gl_msg"></div>
                 <button class="btn primary" id="imp_gl_go">Blutzucker importieren</button>
 
-                <p style="color:var(--text-faint);font-size:0.8rem;margin:20px 0 0">😴 Schlaf folgt, sobald eine Beispieldatei da ist.</p>
-                <button class="btn ghost" onclick="closeSheet()">Schließen</button>`);
+                <label style="margin-top:24px">🩺 Fitbit Tageskennzahlen (CSV – mehrere möglich)</label>
+                <input id="imp_daily" type="file" accept=".csv,text/csv" multiple>
+                <div class="msg" id="imp_daily_msg"></div>
+                <button class="btn primary" id="imp_daily_go">Tageskennzahlen importieren</button>
+                <p style="color:var(--text-faint);font-size:0.75rem;margin:10px 0 0">Schlaf, HRV, SpO₂, Hauttemperatur, Atemfrequenz — passende CSVs auswählen, Typ wird automatisch erkannt.</p>
+
+                <button class="btn ghost" style="margin-top:20px" onclick="closeSheet()">Schließen</button>`);
             document.getElementById("imp_go").addEventListener("click", importHR);
             document.getElementById("imp_gl_go").addEventListener("click", importGlucose);
+            document.getElementById("imp_daily_go").addEventListener("click", importDaily);
         }
 
         async function importHR() {
@@ -739,6 +764,118 @@
             btn.disabled = false;
             renderChart();
         }
+        // ===== Tageskennzahlen =====
+        const METRICS = [
+            { key:"schlaf",       icon:"😴", label:"Schlaf" },
+            { key:"tiefschlaf",   icon:"🛌", label:"Tiefschlaf" },
+            { key:"ruhepuls",     icon:"❤️", label:"Ruhepuls" },
+            { key:"hrv",          icon:"📈", label:"HRV" },
+            { key:"spo2",         icon:"🫁", label:"SpO₂" },
+            { key:"hauttemp",     icon:"🌡️", label:"Hauttemp" },
+            { key:"atemfrequenz", icon:"🌬️", label:"Atmung" },
+        ];
+        const METRIC_LABEL = Object.fromEntries(METRICS.map(m => [m.key, m.label]));
+
+        async function loadDayMetrics() {
+            const day = iso(dayDate(currentIndex));
+            dayMetrics = {};
+            const { data, error } = await db.from("daily_metrics").select("metric,value,unit").eq("day", day);
+            if (!error && data) data.forEach(r => dayMetrics[r.metric] = r);
+            renderMetrics();
+        }
+        function renderMetrics() {
+            const row = document.getElementById("metricsRow");
+            if (!row) return;
+            const tiles = METRICS.filter(m => dayMetrics[m.key]).map(m => {
+                const r = dayMetrics[m.key];
+                return `<div class="mtile"><div class="mt-ic">${m.icon}</div>` +
+                    `<div class="mt-val">${r.value}<small>${r.unit ? " "+escapeHtml(r.unit) : ""}</small></div>` +
+                    `<div class="mt-lbl">${m.label}</div></div>`;
+            });
+            row.innerHTML = tiles.join("");
+            row.style.display = tiles.length ? "" : "none";
+        }
+
+        // ===== Fitbit Tageskennzahlen-Import (Multi-Datei, Typ-Erkennung) =====
+        function parseDailyFile(text) {
+            const lines = text.split(/\r?\n/).filter(l => l.length);
+            if (lines.length < 2) return { unknown:true };
+            const header = lines[0].split(",");
+            const has = h => header.indexOf(h);
+            const num = v => { const n = parseFloat(v); return isNaN(n) ? null : n; };
+            const dateOf = ts => (ts || "").slice(0,10);
+            const out = [];
+
+            if (header.includes("overall_score")) {                 // Sleep Score
+                const iTs=has("timestamp"), iS=has("overall_score"), iD=has("deep_sleep_in_minutes"), iR=has("resting_heart_rate");
+                for (let i=1;i<lines.length;i++){ const c=lines[i].split(","); const day=dateOf(c[iTs]); if(!/^\d{4}-\d{2}-\d{2}$/.test(day)) continue;
+                    if(num(c[iS])!=null) out.push({day,metric:"schlaf",value:num(c[iS]),unit:"Pkt"});
+                    if(iD>=0&&num(c[iD])!=null) out.push({day,metric:"tiefschlaf",value:num(c[iD]),unit:"Min"});
+                    if(iR>=0&&num(c[iR])!=null) out.push({day,metric:"ruhepuls",value:num(c[iR]),unit:"bpm"});
+                }
+            } else if (header.includes("rmssd")) {                   // HRV
+                const iTs=has("timestamp"), iV=has("rmssd");
+                for (let i=1;i<lines.length;i++){ const c=lines[i].split(","); const day=dateOf(c[iTs]); const v=num(c[iV]);
+                    if(/^\d{4}-\d{2}-\d{2}$/.test(day)&&v!=null) out.push({day,metric:"hrv",value:Math.round(v*10)/10,unit:"ms"}); }
+            } else if (header.includes("average_value") && header.includes("lower_bound")) { // SpO2 (Daily)
+                const iTs=has("timestamp"), iV=has("average_value");
+                for (let i=1;i<lines.length;i++){ const c=lines[i].split(","); const day=dateOf(c[iTs]); const v=num(c[iV]);
+                    if(/^\d{4}-\d{2}-\d{2}$/.test(day)&&v!=null) out.push({day,metric:"spo2",value:Math.round(v*10)/10,unit:"%"}); }
+            } else if (header.includes("nightly_temperature")) {     // Hauttemperatur
+                const iEnd=has("sleep_end"), iV=has("nightly_temperature");
+                for (let i=1;i<lines.length;i++){ const c=lines[i].split(","); const day=dateOf(c[iEnd]); const v=num(c[iV]);
+                    if(/^\d{4}-\d{2}-\d{2}$/.test(day)&&v!=null) out.push({day,metric:"hauttemp",value:Math.round(v*100)/100,unit:"°C"}); }
+            } else if (header.includes("breaths per minute")) {      // Atemfrequenz (Ø/Tag)
+                const iTs=has("timestamp"), iV=has("breaths per minute");
+                const agg={};
+                for (let i=1;i<lines.length;i++){ const c=lines[i].split(","); const day=dateOf(c[iTs]); const v=num(c[iV]);
+                    if(/^\d{4}-\d{2}-\d{2}$/.test(day)&&v!=null){ (agg[day]=agg[day]||{s:0,n:0}); agg[day].s+=v; agg[day].n++; } }
+                for (const day in agg) out.push({day,metric:"atemfrequenz",value:Math.round(agg[day].s/agg[day].n*10)/10,unit:"/min"});
+            } else {
+                return { unknown:true };
+            }
+            return out;
+        }
+
+        async function importDaily() {
+            const files = document.getElementById("imp_daily").files;
+            const msg = document.getElementById("imp_daily_msg");
+            const btn = document.getElementById("imp_daily_go");
+            if (!files.length) { msg.className="msg error"; msg.textContent="Bitte Dateien wählen."; return; }
+            btn.disabled = true; msg.className = "msg"; msg.textContent = "Verarbeite …";
+
+            let all = [], unknown = 0;
+            for (const f of files) {
+                let res;
+                try { res = parseDailyFile(await f.text()); }
+                catch (e) { unknown++; continue; }
+                if (res && res.unknown) { unknown++; continue; }
+                all = all.concat(res);
+            }
+            if (!all.length) { msg.className="msg error"; msg.textContent = `Keine passenden Daten erkannt${unknown?` (${unknown} Datei(en) übersprungen)`:""}.`; btn.disabled=false; return; }
+
+            const map = new Map();
+            all.forEach(r => map.set(r.day+"#"+r.metric, r));   // Duplikate: letzter gewinnt
+            const rows = [...map.values()];
+
+            const CH = 500;
+            for (let i=0;i<rows.length;i+=CH){
+                msg.textContent = `Speichere … ${Math.min(i, rows.length)}/${rows.length}`;
+                const { error } = await db.from("daily_metrics").upsert(rows.slice(i,i+CH), { onConflict:"day,metric" });
+                if (error) { msg.className="msg error"; msg.textContent="Fehler: "+error.message; btn.disabled=false; return; }
+            }
+            const counts = {};
+            rows.forEach(r => counts[r.metric] = (counts[r.metric]||0)+1);
+            const days = [...new Set(rows.map(r=>r.day))];
+            msg.className = "msg ok";
+            msg.textContent = `✓ ${rows.length} Werte an ${days.length} Tag(en): ` +
+                Object.entries(counts).map(([k,n]) => `${METRIC_LABEL[k]||k} ${n}`).join(", ") +
+                (unknown ? ` · ${unknown} übersprungen` : "");
+            btn.disabled = false;
+            loadDayMetrics();
+        }
+        window.importDaily = importDaily;
+
         window.openImport = openImport;
 
         // ===== CSV-Export =====
