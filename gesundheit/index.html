@@ -882,7 +882,14 @@
             if (mRows.length) {
                 msg.textContent = "Speichere Tageskennzahlen …";
                 const { error } = await db.from("daily_metrics").upsert(mRows, { onConflict:"day,metric" });
-                if (error) { msg.className="msg error"; msg.textContent="Fehler (Kennzahlen): "+error.message; btn.disabled=false; return; }
+                if (error) {
+                    // Puls liegt zu diesem Zeitpunkt bereits in der Datenbank – das muss die Meldung sagen.
+                    msg.className = "msg error";
+                    msg.textContent = `Puls gespeichert (${rows.length} Werte), Kennzahlen fehlgeschlagen: ${error.message}`;
+                    btn.disabled = false;
+                    renderChart();
+                    return;
+                }
             }
 
             const days = [...new Set(rows.map(r => r.day))];
